@@ -2,6 +2,9 @@ description: >
   Builds the package. When running this job, make sure to give it a
   context that initializes the CIRCLE_TOKEN env var.
 
+# TODO: Find out how we can dynamically choose an executor depending on
+#       the package type being built.
+#
 # The cli orb is declared in src/@orb.yml
 executor: cli/default
 
