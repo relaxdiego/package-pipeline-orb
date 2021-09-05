@@ -5,6 +5,8 @@ description: >
 # TODO: Find out how we can dynamically choose an executor depending on
 #       the package type being built.
 #
+# TODO: Should we just pick a generic, linux-based executor?
+#
 # The cli orb is declared in src/@orb.yml
 executor: cli/default
 
@@ -59,6 +61,9 @@ steps:
       environment:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: <<include(scripts/render-build-info.sh)>>
+
+  # TODO: Should we add a step here that installs necessary binaries
+  #       depending on the value of packae-repo-provider and package-type?
 
   - run:
       name: Build and test
