@@ -38,6 +38,8 @@ parameters:
 steps:
   - run:
       name: Print debug info
+      # TODO: Only display the warning about CIRCLE_TOKEN if package-rep-provider
+      #       is 'circleci-orb' and CIRCLE_TOKEN is not defined.
       command: |
         echo "
         package-repo         : << parameters.package-repo >>
