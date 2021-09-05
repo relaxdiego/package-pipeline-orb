@@ -1,5 +1,6 @@
 description: >
-  Builds the package.
+  Builds the package. When running this job, make sure to give it a
+  context that initializes the CIRCLE_TOKEN env var.
 
 # The cli orb is declared in src/@orb.yml
 executor: cli/default
@@ -31,6 +32,13 @@ steps:
         echo package-repo-provider: << parameters.package-repo-provider >>
         echo versioning-provider  : << parameters.versioning-provider >>
 
+        if [ -z "$CIRCLE_TOKEN" ]; then
+          echo "WARNING: \$CIRCLE_TOKEN is not defined! Make sure to give " \
+               "         this job a context that defines it."
+        else
+          echo "\$CIRCLE_TOKEN is defined."
+        fi
+
   - checkout
 
   - run:
@@ -42,6 +50,7 @@ steps:
 
   - run:
       name: Publish the build
+
       command: |
         circleci orb publish \
           --skip-update-check \

@@ -8,8 +8,6 @@ workflows:
     jobs:
       - pipeline/stage:
           name: build
-          # Defined in Organization Settings > Contexts
-          # Makes CIRCLE_TOKEN env var available to the build environment
           context: orb-publishing
           filters:
             branches:
