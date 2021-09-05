@@ -22,7 +22,7 @@ workflows:
 
           package-repo: relaxdiego/package-pipeline
           package-repo-provider: circleci-orb
-          versioning-scheme: semver2
+          versioning-provider: semver2
 
       # - pipeline/stage:
       #     name: dev
