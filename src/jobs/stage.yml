@@ -54,7 +54,7 @@ steps:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: |
         # TODO: Move this to a script under src/scripts
-        if [ "PIPELINE_VERSIONING_PROVIDER" == "semver2" ]; then
+        if [ "PIPELINE_VERSIONING_PROVIDER" = "semver2" ]; then
           # TODO: Actually implement this
           cat > BUILD-INFO \<<EOF
         {
@@ -72,7 +72,7 @@ steps:
         PIPELINE_PACKAGE_TYPE: << parameters.package-type >>
       command: |
         # TODO: Move this to a script under src/scripts
-        if [ "PIPELINE_PACKAGE_TYPE" == "circleci-orb" ]; then
+        if [ "PIPELINE_PACKAGE_TYPE" = "circleci-orb" ]; then
           make validate
           circleci orb pack src > orb.yml
         else
@@ -94,7 +94,7 @@ steps:
           exit 1
         fi
 
-        if [ "PIPELINE_PACKAGE_REPO_PROVIDER" == "circleci-orb" ]; then
+        if [ "PIPELINE_PACKAGE_REPO_PROVIDER" = "circleci-orb" ]; then
           PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
           circleci orb publish \
             --skip-update-check \
