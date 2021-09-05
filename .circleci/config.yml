@@ -20,8 +20,8 @@ workflows:
               ignore:
                 - .*
 
-          package-repo-provider: circleci-orb
           package-repo: relaxdiego/package-pipeline
+          package-repo-provider: circleci-orb
           versioning-scheme: semver2
 
       # - pipeline/stage:
