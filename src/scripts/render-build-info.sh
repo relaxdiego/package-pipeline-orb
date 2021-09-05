@@ -12,6 +12,9 @@ Main() {
        ;;
 
   esac
+
+  echo "BUILD-INFO rendered as:"
+  cat BUILD-INFO
 }
 
 # Will not run if sourced for bats-core tests.
