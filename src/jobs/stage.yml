@@ -54,17 +54,19 @@ steps:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: |
         # TODO: Move this to a script under src/scripts
-        if [ "PIPELINE_VERSIONING_PROVIDER" = "semver2" ]; then
-          # TODO: Actually implement this
-          cat > BUILD-INFO \<<EOF
-        {
-          "build_id": "dev:alpha"
-        }
-        EOF
-        else
-          echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'"
-          exit 1
-        fi
+        case "$PIPELINE_VERSIONING_PROVIDER" in
+
+          "semver2")
+             # TODO: Actually implement this
+             echo "{ \"build_id\": \"dev:alpha\" }" > BUILD-INFO
+             ;;
+
+          *)
+             echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'"
+             exit 1
+             ;;
+
+        esac
 
   - run:
       name: Build and test
@@ -72,13 +74,19 @@ steps:
         PIPELINE_PACKAGE_TYPE: << parameters.package-type >>
       command: |
         # TODO: Move this to a script under src/scripts
-        if [ "PIPELINE_PACKAGE_TYPE" = "circleci-orb" ]; then
-          make validate
-          circleci orb pack src > orb.yml
-        else
-          echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'"
-          exit 1
-        fi
+        case "$PIPELINE_PACKAGE_TYPE" in
+
+          "circleci-orb")
+            make validate
+            circleci orb pack src > orb.yml
+            ;;
+
+          *)
+            echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'"
+            exit 1
+          ;;
+
+        esac
 
   - jq/install
 
@@ -94,14 +102,20 @@ steps:
           exit 1
         fi
 
-        if [ "PIPELINE_PACKAGE_REPO_PROVIDER" = "circleci-orb" ]; then
-          PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
-          circleci orb publish \
-            --skip-update-check \
-            orb.yml \
-            "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
-            --token "$CIRCLE_TOKEN"
-        else
-          echo "FATAL: Unknown PIPELINE_PACKAGE_REPO_PROVIDER '$PIPELINE_PACKAGE_REPO_PROVIDER'"
-          exit 1
-        fi
+        case "$PIPELINE_PACKAGE_REPO_PROVIDER" in
+
+          "circleci-orb")
+            PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+            circleci orb publish \
+              --skip-update-check \
+              orb.yml \
+              "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
+              --token "$CIRCLE_TOKEN"
+          ;;
+
+          *)
+            echo "FATAL: Unknown PIPELINE_PACKAGE_REPO_PROVIDER '$PIPELINE_PACKAGE_REPO_PROVIDER'"
+            exit 1
+            ;;
+
+        esac
