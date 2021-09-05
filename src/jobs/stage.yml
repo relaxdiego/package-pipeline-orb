@@ -49,18 +49,59 @@ steps:
   - checkout
 
   - run:
-      name: Build and test
+      name: Initialize the build id
+      environment:
+        PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: |
-        make validate
+        # TODO: Move this to a script under src/scripts
+        if [ "PIPELINE_VERSIONING_PROVIDER" == "semver2" ]; then
+          # TODO: Actually implement this
+          cat > BUILD-INFO \<<EOF
+        {
+          "build_id": "dev:alpha"
+        }
+        EOF
+        else
+          echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'"
+          exit 1
+        fi
 
-        circleci orb pack src > orb.yml
+  - run:
+      name: Build and test
+      environment:
+        PIPELINE_PACKAGE_TYPE: << parameters.package-type >>
+      command: |
+        # TODO: Move this to a script under src/scripts
+        if [ "PIPELINE_PACKAGE_TYPE" == "circleci-orb" ]; then
+          make validate
+          circleci orb pack src > orb.yml
+        else
+          echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'"
+          exit 1
+        fi
+
+  - jq/install
 
   - run:
       name: Publish the build
-
+      environment:
+        PIPELINE_PACKAGE_REPO: << parameters.package-repo >>
+        PIPELINE_PACKAGE_REPO_PROVIDER: << parameters.package-repo-provider >>
       command: |
-        circleci orb publish \
-          --skip-update-check \
-          orb.yml \
-          << parameters.package-repo >>@dev:alpha \
-          --token "$CIRCLE_TOKEN"
+        # TODO: Move this to a script under src/scripts
+        if [ -z "$PIPELINE_PACKAGE_REPO" ]; then
+          echo "FATAL: PIPELINE_PACKAGE_REPO is undefined"
+          exit 1
+        fi
+
+        if [ "PIPELINE_PACKAGE_REPO_PROVIDER" == "circleci-orb" ]; then
+          PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+          circleci orb publish \
+            --skip-update-check \
+            orb.yml \
+            "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
+            --token "$CIRCLE_TOKEN"
+        else
+          echo "FATAL: Unknown PIPELINE_PACKAGE_REPO_PROVIDER '$PIPELINE_PACKAGE_REPO_PROVIDER'"
+          exit 1
+        fi
