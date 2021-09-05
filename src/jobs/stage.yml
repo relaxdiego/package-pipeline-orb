@@ -1,0 +1,50 @@
+description: >
+  Builds the package.
+
+# The cli orb is declared in src/@orb.yml
+executor: cli/default
+
+parameters:
+  package-repo-provider:
+    description: The backend provider of the package repo.
+    type: enum
+    enum:
+      - circleci-orb
+
+  package-repo:
+    description: >
+      The name or URL of the package repo. The format of this parameter will
+      depend on the value of package-repo-provider.
+    type: string
+
+  versioning-scheme:
+    description: Which versioning scheme to use when naming the package.
+    type: enum
+    enum:
+      - semver2
+
+steps:
+  - run:
+      name: debug
+      command: |
+        echo package-repo-provider: << parameters.package-repo-provider >>
+        echo package-repo         : << parameters.package-repo >>
+        echo versioning-scheme    : << parameters.versioning-scheme >>
+
+  - checkout
+
+  - run:
+      name: build-and-test
+      command: |
+        make validate
+
+        circleci orb pack src > orb.yml
+
+  - run:
+      name: publish
+      command: |
+        circleci orb publish \
+          --skip-update-check \
+          orb.yml \
+          << parameters.package-repo >>@dev:alpha \
+          --token $CIRCLE_TOKEN

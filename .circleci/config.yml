@@ -1,35 +1,23 @@
 version: 2.1
 
 orbs:
-  pipeline-tools: relaxdiego/package-pipeline@dev:alpha
+  pipeline: relaxdiego/package-pipeline@dev:alpha
 
 workflows:
   pipeline:
     jobs:
-      - pipeline-tools/build:
-          package-repo-provider: circle-orb
+      - pipeline/stage:
+          name: build
+
+          package-repo-provider: circleci-orb
           package-repo: relaxdiego/package-pipeline
           versioning-scheme: semver2
 
-      - pipeline-tools/dev:
-          package-repo-provider: circle-orb
-          package-repo: relaxdiego/package-pipeline
-          versioning-scheme: semver2
-          environment-provider: circleci-orb
-
-      - pipeline-tools/qa:
-          package-repo-provider: circle-orb
-          package-repo: relaxdiego/package-pipeline
-          versioning-scheme: semver2
-          environment-provider: circleci-orb
-
-      - pipeline-tools/staging:
-          package-repo-provider: circle-orb
-          package-repo: relaxdiego/package-pipeline
-          versioning-scheme: semver2
-          environment-provider: circleci-orb
-
-      - pipeline-tools/production:
-          package-repo-provider: circle-orb
-          package-repo: relaxdiego/package-pipeline
-          versioning-scheme: semver2
+      # - pipeline/stage:
+      #     name: dev
+      #     requires:
+      #       - build
+      #
+      #     package-repo-provider: circleci-orb
+      #     package-repo: relaxdiego/package-pipeline
+      #     versioning-scheme: semver2
