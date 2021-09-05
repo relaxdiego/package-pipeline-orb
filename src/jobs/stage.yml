@@ -49,24 +49,10 @@ steps:
   - checkout
 
   - run:
-      name: Initialize the build id
+      name: Render BUILD-INFO
       environment:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
-      command: |
-        # TODO: Move this to a script under src/scripts
-        case "$PIPELINE_VERSIONING_PROVIDER" in
-
-          "semver2")
-             # TODO: Actually implement this
-             echo "{ \"build_id\": \"dev:alpha\" }" > BUILD-INFO
-             ;;
-
-          *)
-             echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'"
-             exit 1
-             ;;
-
-        esac
+      command: <<include(scripts/render-build-info.sh)>>
 
   - run:
       name: Build and test
