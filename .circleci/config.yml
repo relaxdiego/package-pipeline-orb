@@ -6,7 +6,7 @@ orbs:
 workflows:
   pipeline:
     jobs:
-      - pipeline/stage:
+      - pipeline/build:
           name: build
           context: orb-publishing
           filters:
@@ -23,7 +23,7 @@ workflows:
           package-type: circleci-orb
           versioning-provider: semver2
 
-      # - pipeline/stage:
+      # - pipeline/validate-and-promote:
       #     name: dev
       #     requires:
       #       - build
