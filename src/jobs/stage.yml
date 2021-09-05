@@ -58,21 +58,7 @@ steps:
       name: Build and test
       environment:
         PIPELINE_PACKAGE_TYPE: << parameters.package-type >>
-      command: |
-        # TODO: Move this to a script under src/scripts
-        case "$PIPELINE_PACKAGE_TYPE" in
-
-          "circleci-orb")
-            make validate
-            circleci orb pack src > orb.yml
-            ;;
-
-          *)
-            echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'"
-            exit 1
-          ;;
-
-        esac
+      command: <<include(scripts/build-and-test.sh)>>
 
   - jq/install
 
