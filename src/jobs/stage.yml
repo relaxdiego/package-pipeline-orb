@@ -70,27 +70,4 @@ steps:
       environment:
         PIPELINE_PACKAGE_REPO: << parameters.package-repo >>
         PIPELINE_PACKAGE_REPO_PROVIDER: << parameters.package-repo-provider >>
-      command: |
-        # TODO: Move this to a script under src/scripts
-        if [ -z "$PIPELINE_PACKAGE_REPO" ]; then
-          echo "FATAL: PIPELINE_PACKAGE_REPO is undefined"
-          exit 1
-        fi
-
-        case "$PIPELINE_PACKAGE_REPO_PROVIDER" in
-
-          "circleci-orb")
-            PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
-            circleci orb publish \
-              --skip-update-check \
-              orb.yml \
-              "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
-              --token "$CIRCLE_TOKEN"
-          ;;
-
-          *)
-            echo "FATAL: Unknown PIPELINE_PACKAGE_REPO_PROVIDER '$PIPELINE_PACKAGE_REPO_PROVIDER'"
-            exit 1
-            ;;
-
-        esac
+      command: <<include(scripts/publish.sh)>>
