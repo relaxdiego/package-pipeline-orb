@@ -20,6 +20,7 @@ workflows:
 
           package-repo: relaxdiego/package-pipeline
           package-repo-provider: circleci-orb
+          package-type: circleci-orb
           versioning-provider: semver2
 
       # - pipeline/stage:

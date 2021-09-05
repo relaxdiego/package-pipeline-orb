@@ -18,6 +18,12 @@ parameters:
     enum:
       - circleci-orb
 
+  package-type:
+    description: The type of package being built.
+    type: enum
+    enum:
+      - circleci-orb
+
   versioning-provider:
     description: Which versioning scheme to use when naming the package.
     type: enum
@@ -30,6 +36,7 @@ steps:
       command: |
         echo package-repo         : << parameters.package-repo >>
         echo package-repo-provider: << parameters.package-repo-provider >>
+        echo package-type         : << parameters.package-type >>
         echo versioning-provider  : << parameters.versioning-provider >>
 
         if [ -z "$CIRCLE_TOKEN" ]; then
