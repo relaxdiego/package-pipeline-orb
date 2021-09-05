@@ -37,16 +37,19 @@ steps:
   - run:
       name: Print debug info
       command: |
-        echo package-repo         : << parameters.package-repo >>
-        echo package-repo-provider: << parameters.package-repo-provider >>
-        echo package-type         : << parameters.package-type >>
-        echo versioning-provider  : << parameters.versioning-provider >>
+        echo "
+        package-repo         : << parameters.package-repo >>
+        package-repo-provider: << parameters.package-repo-provider >>
+        package-type         : << parameters.package-type >>
+        versioning-provider  : << parameters.versioning-provider >>
+        "
 
         if [ -z "$CIRCLE_TOKEN" ]; then
-          echo "WARNING: \$CIRCLE_TOKEN is not defined! Make sure to give " \
-               "         this job a context that defines it."
+          echo "WARNING: CIRCLE_TOKEN is not defined! If this job needs to " \
+               "talk to the Circle CI API, make sure to give it a context " \
+               "that defines it."
         else
-          echo "\$CIRCLE_TOKEN is defined."
+          echo "CIRCLE_TOKEN is defined."
         fi
 
   - checkout
