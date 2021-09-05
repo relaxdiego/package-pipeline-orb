@@ -1,6 +1,6 @@
 description: >
-  Builds the package. When running this job, make sure to give it a
-  context that initializes the CIRCLE_TOKEN env var.
+  Builds and tests the package. If successful, the package will be published
+  to the provided package repository.
 
 # TODO: Find out how we can dynamically choose an executor depending on
 #       the package type being built.
@@ -38,8 +38,6 @@ parameters:
 steps:
   - run:
       name: Print debug info
-      # TODO: Only display the warning about CIRCLE_TOKEN if package-rep-provider
-      #       is 'circleci-orb' and CIRCLE_TOKEN is not defined.
       command: |
         echo "
         package-repo         : << parameters.package-repo >>
@@ -47,14 +45,6 @@ steps:
         package-type         : << parameters.package-type >>
         versioning-provider  : << parameters.versioning-provider >>
         "
-
-        if [ -z "$CIRCLE_TOKEN" ]; then
-          echo "WARNING: CIRCLE_TOKEN is not defined! If this job needs to " \
-               "talk to the Circle CI API, make sure to give it a context " \
-               "that defines it."
-        else
-          echo "CIRCLE_TOKEN is defined."
-        fi
 
   - checkout
 
