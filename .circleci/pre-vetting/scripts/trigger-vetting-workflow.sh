@@ -7,7 +7,7 @@ cat > pipelineparams.json <<EOF
 {
     "branch": "$CIRCLE_BRANCH",
     "parameters": {
-        "vet-the-deb-build": true,
+        "vet-the-dev-build": true,
         "orb-dev-build-id": "dev:${BUILD_ID}"
     }
 }
