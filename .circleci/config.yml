@@ -79,7 +79,7 @@ jobs:
           name: Validate orb
           command: |
             cat > orb.yml \<<EOF
-            # $(jq --compact . BUILD_INFO)
+            # $(jq -c . BUILD_INFO)
             EOF
             circleci orb pack src >> orb.yml
             circleci orb validate orb.yml
@@ -110,6 +110,8 @@ jobs:
             fi
 
             PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+
+            set -x
             circleci orb publish \
               --skip-update-check \
               orb.yml \
