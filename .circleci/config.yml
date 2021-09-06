@@ -51,6 +51,7 @@ orbs:
   # workflow has built and published it with a dev label.
   pipeline: relaxdiego/package-pipeline@<< pipeline.parameters.orb-dev-build-id >>
 
+
 #
 # JOBS. These are used only in the pre-vetting workflow.
 #
@@ -243,8 +244,8 @@ workflows:
       #
       # Orb Pipeline Vetting
       #
-      - pipeline/build-and-test:
-          name: build-and-test
+      - pipeline/build-and-test-circleci-orb:
+          name: build-and-test CircleCI orb
           context: orb-publishing
           filters:
             branches:
