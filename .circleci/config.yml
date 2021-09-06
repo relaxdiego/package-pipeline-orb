@@ -78,11 +78,9 @@ jobs:
       - run:
           name: Build orb
           command: |
-            cat > orb.yml \<<EOF
-            # $(jq -c . ~/workspace/BUILD-INFO)
-            EOF
+            # Prepend BUILD-INFO contents as a single-line comment
+            echo "# pipeline:build-info $(jq -c . ~/workspace/BUILD-INFO)" > orb.yml
             circleci orb pack src >> orb.yml
-
             head -n5 orb.yml
 
       - run:
