@@ -9,7 +9,7 @@ parameters:
     type: string
     default: relaxdiego/package-pipeline
 
-  vet-the-orb-dev-build:
+  vet-the-dev-build:
     description: >
       This is an internal parameter. DO NOT SET THIS. It's used internally by
       this config to determine whether the vetting workflow should be executed.
@@ -144,7 +144,7 @@ workflows:
   #
   # IMPORTANT: All jobs in this workflow SHOULD not use the orb being developed!
   pre-vetting:
-    unless: << pipeline.parameters.vet-the-orb >>
+    unless: << pipeline.parameters.vet-the-dev-build >>
     jobs:
       - prepare-build-info:
           name: Prepare BUILD-INFO
@@ -233,26 +233,29 @@ workflows:
   # was published by the pre-vetting workflow. At this point, this workflow's
   # job is to use various elements of the orb as a way to vet its correctnes.
   # At the end of this vetting process, the orb will be promoted to a final release.
-  # vetting:
-  #   when: << pipeline.parameters.vet-the-orb >>
-  #   jobs:
-  #     - pipeline/build-and-test:
-  #         name: build-and-test
-  #         context: orb-publishing
-  #         filters:
-  #           branches:
-  #             only:
-  #               - main
-  #               - maint/.*
-  #           tags:
-  #             ignore:
-  #               - .*
-  #
-  #         package-repo: relaxdiego/package-pipeline
-  #         package-repo-provider: circleci-orb
-  #         package-type: circleci-orb
-  #         versioning-provider: semver2
-  #
+  vetting:
+    when: << pipeline.parameters.vet-the-dev-build >>
+    jobs:
+      #
+      # Orb Pipeline Vetting
+      #
+      - pipeline/build-and-test:
+          name: build-and-test
+          context: orb-publishing
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+          package-repo: relaxdiego/package-pipeline
+          package-repo-provider: circleci-orb
+          package-type: circleci-orb
+          versioning-provider: semver2
+
       # - pipeline/validate-and-promote:
       #     name: dev
       #     requires:
