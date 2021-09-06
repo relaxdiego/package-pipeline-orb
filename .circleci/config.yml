@@ -75,6 +75,40 @@ jobs:
             circleci orb pack src > orb.yml
             circleci orb validate orb.yml
 
+      - persist_to_workspace:
+          root: .
+          paths:
+            - orb.yml
+
+  publish-dev-orb:
+    executor: circleci-cli/default
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Publish the orb
+          command: |
+            if [ -z "$CIRCLE_TOKEN" ]; then
+                echo "FATAL: CIRCLE_TOKEN is not defined! To fix this error, make sure the" \
+                     "job is given a Circle CI context that defines the CIRCLE_TOKEN env var." \
+                     "See https://circleci.com/docs/2.0/contexts/ for more information." 1>&2
+                exit 1
+            fi
+
+            PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+            circleci orb publish \
+              --skip-update-check \
+              orb.yml \
+              "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
+              --token "$CIRCLE_TOKEN"
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - orb.yml
+
+
 #
 # WORKFLOWS. Divided in to two stages. The first is a pre-vetting workflow which
 #            concerned with vetting, building, and publishing a dev release orb.
@@ -96,6 +130,7 @@ workflows:
       - prepare-build-info:
           name: Prepare BUILD-INFO
 
+
       - orb-tools/lint:
           name: Lint YAML files
           filters:
@@ -107,10 +142,9 @@ workflows:
               ignore:
                 - .*
 
+
       - shellcheck/check:
           name: Check scripts syntax
-          dir: ./src/scripts
-          exclude: SC2148
           filters:
             branches:
               only:
@@ -119,10 +153,13 @@ workflows:
             tags:
               ignore:
                 - .*
+
+          dir: ./src/scripts
+          exclude: SC2148
+
 
       - bats/run:
           name: Run BATS tests
-          path: ./src/tests
           filters:
             branches:
               only:
@@ -132,8 +169,11 @@ workflows:
               ignore:
                 - .*
 
+          path: ./src/tests
+
+
       - build-orb:
-          name: Build and validate the orb
+          name: Build the validate the orb
           requires:
             - Prepare BUILD-INFO
             - Lint YAML files
@@ -148,20 +188,28 @@ workflows:
               ignore:
                 - .*
 
-      # - publish-pre-release-orb:
-      #     name: Publish dev pre-release
-      #     context: orb-publishing
-      #     requires:
-      #       - Build and test the orb
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
-      #           - maint/.*
-      #       tags:
-      #         ignore:
-      #           - .*
-      #
+
+      - approve-for-release:
+          name: Wait for approval for release to production
+          type: approval
+          requires:
+            - Build and validate the orb
+
+
+      - publish-dev-orb:
+          name: Publish orb as a dev pre-release
+          context: orb-publishing
+          requires:
+            - Wait for approval for release to production
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
       #       steps:
       #         - persist_to_workspace:
       #             root: .
