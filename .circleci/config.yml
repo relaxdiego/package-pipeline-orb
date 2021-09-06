@@ -67,7 +67,7 @@ jobs:
           paths:
             - BUILD-INFO
 
-  build-orb:
+  build-dev-orb:
     executor: circleci-cli/default
     steps:
       - attach_workspace:
@@ -100,7 +100,7 @@ jobs:
       - jq/install
 
       - run:
-          name: Publish the orb
+          name: Publish the dev orb
           command: |
             if [ -z "$CIRCLE_TOKEN" ]; then
                 echo "FATAL: CIRCLE_TOKEN is not defined! To fix this error, make sure the" \
@@ -180,7 +180,7 @@ workflows:
           path: ./src/tests
 
 
-      - build-orb:
+      - build-dev-orb:
           name: Build the validate the orb
           requires:
             - Prepare BUILD-INFO
