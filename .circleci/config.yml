@@ -113,7 +113,7 @@ jobs:
             circleci orb publish \
               --skip-update-check \
               orb.yml \
-              "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
+              "${PIPELINE_PACKAGE_REPO}@dev:${PIPELINE_BUILD_ID}" \
               --token "$CIRCLE_TOKEN"
 
 
