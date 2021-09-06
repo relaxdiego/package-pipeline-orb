@@ -1,0 +1,26 @@
+version: 2.1
+
+orbs:
+  pipeline: relaxdiego/package-pipeline@${PIPELINE_BUILD_ID}
+
+
+workflows:
+  vetting:
+    jobs:
+
+      #
+      # Orb Pipeline Vetting
+      #
+
+      - pipeline/build-and-test-circleci-orb:
+          name: build-and-test CircleCI orb
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+          orb-repo: ${PIPELINE_ORB_REPO}

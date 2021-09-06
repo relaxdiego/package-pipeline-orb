@@ -1,5 +1,11 @@
 version: 2.1
 
+# This is a dynamic configuration file
+#
+# IMPORTANT: The CircleCI project must enable dynamic configuration. Do this
+#            via Project Settings > Advanced > Enable dynamic config
+setup: true
+
 #
 # PIPELINE PARAMETERS
 #
@@ -8,28 +14,6 @@ parameters:
     description: The orb repo where this orb is to be published.
     type: string
     default: relaxdiego/package-pipeline
-
-  vet-the-dev-build:
-    description: >
-      This is an internal parameter. DO NOT SET THIS. It's used internally by
-      this config to determine whether the vetting workflow should be executed.
-      This is set to true by the pre-vetting workflow after it has packed and
-      published the orb with the dev label.
-    type: boolean
-    default: false
-
-  orb-dev-build-id:
-    description: >
-      DO NOT SET THIS. This is an internal parameter used by this pipeline
-      to determine which version of the orb to run vet. The value for this
-      parmeter will be set by the pre-vetting workflow.
-    type: string
-    # This version must have been already published manually in order for
-    # this pipeline to work. Note that during the execution of the pre-vetting
-    # workflow, this is just a placeholder (that must point to a valid version).
-    # When this pipeline triggers the post-dev workflow, it will change
-    # this to the correct value.
-    default: "0.1"
 
 
 #
@@ -46,15 +30,11 @@ orbs:
   circleci-cli: circleci/circleci-cli@0.1
   # https://circleci.com/developer/orbs/orb/circleci/jq
   jq: circleci/jq@2.2
+  # the continuation orb is required in order to use dynamic configuration
+  # https://circleci.com/developer/orbs/orb/circleci/continuation
+  continuation: circleci/continuation@0.1.2
 
-  # This orb is only used by the vetting workflow, after the pre-vetting
-  # workflow has built and published it with a dev label.
-  pipeline: relaxdiego/package-pipeline@<< pipeline.parameters.orb-dev-build-id >>
 
-
-#
-# JOBS. These are used only in the pre-vetting workflow.
-#
 jobs:
   prepare-build-info:
     executor: circleci-cli/default
@@ -118,7 +98,9 @@ jobs:
             bash .circleci/pre-vetting/scripts/publish.sh
 
   trigger-vetting-workflow:
-    executor: circleci-cli/default
+    executor: continuation/default
+    environment:
+      PIPELINE_ORB_REPO: << pipeline.parameters.orb-repo >>
     steps:
       - attach_workspace:
           at: ~/workspace
@@ -128,28 +110,14 @@ jobs:
       - checkout
 
       - run:
-          name: Trigger the vetting workflow via the Circle CI API
+          name: Trigger the vetting workflow
           command: |
-            bash .circleci/pre-vetting/scripts/trigger-vetting-workflow.sh
+            bash .circleci/pre-vetting/scripts/render-vetting-config.sh > vetting-config.yml
+          configuration_path: vetting-config.yml
 
 
-#
-# WORKFLOWS. Divided in to two stages. The first is a pre-vetting workflow which
-#            concerned with vetting, building, and publishing a dev release orb.
-#            It will then trigger the the vetting workflow which will subjet the
-#            pre-release orb through various integration tests. At the end of
-#            this process, the vetting workflow will wait for approval to promote
-#            the orb to a production release.
 workflows:
-  # Prepare the orb and publish it as a dev releaseso that the vetting workflow
-  # can run against the version that we create and publish here
-  #
-  # All jobs in this workflow MUST NOT use elements defined in the orb since
-  # we cannot depend on unvetted elements in the SUT to perform our pre-vetting!
-  #
-  # IMPORTANT: All jobs in this workflow SHOULD not use the orb being developed!
-  pre-vetting:
-    unless: << pipeline.parameters.vet-the-dev-build >>
+  build-and-publish:
     jobs:
       - prepare-build-info:
           name: Prepare BUILD-INFO
@@ -232,30 +200,3 @@ workflows:
           context: orb-publishing
           requires:
             - Publish orb as a dev pre-release
-
-  # This workflow is triggered by the pre-vetting workflow. By this time,
-  # pipeline.parameters.pipeline will have already been set to the orb that
-  # was published by the pre-vetting workflow. At this point, this workflow's
-  # job is to use various elements of the orb as a way to vet its correctnes.
-  # At the end of this vetting process, the orb will be promoted to a final release.
-  vetting:
-    when: << pipeline.parameters.vet-the-dev-build >>
-    jobs:
-
-      #
-      # Orb Pipeline Vetting
-      #
-
-      - pipeline/build-and-test-circleci-orb:
-          name: build-and-test CircleCI orb
-          context: orb-publishing
-          filters:
-            branches:
-              only:
-                - main
-                - maint/.*
-            tags:
-              ignore:
-                - .*
-
-          orb-repo: << pipeline.parameters.orb-repo >>
