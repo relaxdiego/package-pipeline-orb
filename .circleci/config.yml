@@ -4,6 +4,11 @@ version: 2.1
 # PIPELINE PARAMETERS
 #
 parameters:
+  orb-repo:
+    description: The orb repo where this orb is to be published.
+    type: string
+    default: relaxdiego/package-pipeline
+
   vet-the-orb:
     description: >
       This is an internal parameter. DO NOT SET THIS. It's used internally by
@@ -95,6 +100,8 @@ jobs:
 
   publish-dev-orb:
     executor: circleci-cli/default
+    environment:
+      PIPELINE_PACKAGE_REPO: << pipeline.parameters.orb-repo >>
     steps:
       - attach_workspace:
           at: .
