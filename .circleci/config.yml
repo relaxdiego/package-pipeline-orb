@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Validate orb
           command: |
-            cat > orb.yml <<EOF
+            cat > orb.yml \<<EOF
             # $(jq --compact . BUILD_INFO)
             EOF
             circleci orb pack src >> orb.yml
