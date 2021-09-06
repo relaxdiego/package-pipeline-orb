@@ -7,8 +7,7 @@ executor: circleci-cli/default
 parameters:
   orb-repo:
     description: >
-      The name or URL of the package repo. The format of this parameter will
-      depend on the value of package-repo-provider.
+      The name or URL of the orb repo
     type: string
 
   versioning-provider:
@@ -34,9 +33,6 @@ steps:
       environment:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: <<include(scripts/render-build-info.sh)>>
-
-  # TODO: Should we add a step here that installs necessary binaries
-  #       depending on the value of packae-repo-provider and package-type?
 
   - run:
       name: Build and test
