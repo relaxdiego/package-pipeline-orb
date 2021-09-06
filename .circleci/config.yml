@@ -190,17 +190,17 @@ workflows:
 
 
       - approve-for-release:
-          name: Wait for approval for release to production
-          type: approval
+          name: Wait for approval to release to production
           requires:
             - Build the validate the orb
+          type: approval
 
 
       - publish-dev-orb:
           name: Publish orb as a dev pre-release
-          context: orb-publishing
           requires:
-            - Wait for approval for release to production
+            - Wait for approval to release to production
+          context: orb-publishing
           filters:
             branches:
               only:
