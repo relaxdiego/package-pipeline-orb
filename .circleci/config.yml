@@ -42,6 +42,7 @@ orbs:
   # https://circleci.com/developer/orbs/orb/circleci/circleci-cli
   circleci-cli: circleci/circleci-cli@0.1
   # https://circleci.com/developer/orbs/orb/circleci/jq
+  jq: circleci/jq@2.2
 
 
 #
@@ -69,13 +70,21 @@ jobs:
   build-orb:
     executor: circleci-cli/default
     steps:
+      - attach_workspace:
+          at: ~/workspace
+
       - checkout
 
       - run:
           name: Validate orb
           command: |
-            circleci orb pack src > orb.yml
+            cat > orb.yml <<EOF
+            # $(jq --compact . BUILD_INFO)
+            EOF
+            circleci orb pack src >> orb.yml
             circleci orb validate orb.yml
+
+            head -n5 orb.yml
 
       - persist_to_workspace:
           root: .
