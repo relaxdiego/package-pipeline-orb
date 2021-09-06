@@ -5,7 +5,7 @@ description: >
 executor: circleci-cli/default
 
 parameters:
-  package-repo:
+  orb-repo:
     description: >
       The name or URL of the package repo. The format of this parameter will
       depend on the value of package-repo-provider.
@@ -23,8 +23,8 @@ steps:
       name: Print debug info
       command: |
         echo "
-        package-repo         : << parameters.package-repo >>
-        versioning-provider  : << parameters.versioning-provider >>
+        orb-repo           : << parameters.orb-repo >>
+        versioning-provider: << parameters.versioning-provider >>
         "
 
   - checkout
@@ -43,13 +43,3 @@ steps:
       environment:
         PIPELINE_PACKAGE_TYPE: circleci-orb
       command: <<include(scripts/build-and-test.sh)>>
-
-  - jq/install
-
-  # # This should be in a separate job
-  # - run:
-  #     name: Publish the build
-  #     environment:
-  #       PIPELINE_PACKAGE_REPO: << parameters.package-repo >>
-  #       PIPELINE_PACKAGE_REPO_PROVIDER: << parameters.package-repo-provider >>
-  #     command: <<include(scripts/publish.sh)>>

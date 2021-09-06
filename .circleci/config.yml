@@ -259,12 +259,3 @@ workflows:
                 - .*
 
           orb-repo: << pipeline.parameters.orb-repo >>
-
-      # - pipeline/validate-and-promote:
-      #     name: dev
-      #     requires:
-      #       - build
-      #
-      #     package-repo-provider: circleci-orb
-      #     package-repo: relaxdiego/package-pipeline
-      #     versioning-scheme: semver2
