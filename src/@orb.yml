@@ -9,6 +9,6 @@ display:
 
 orbs:
   # https://circleci.com/developer/orbs/orb/circleci/circleci-cli
-  cli: circleci/circleci-cli@0.1
+  circleci-cli: circleci/circleci-cli@0.1
   # https://circleci.com/developer/orbs/orb/circleci/jq
   jq: circleci/jq@2.2

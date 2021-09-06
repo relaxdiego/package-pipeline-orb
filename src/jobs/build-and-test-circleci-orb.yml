@@ -1,14 +1,8 @@
 description: >
-  Builds and tests the package. If successful, the package will be published
-  to the provided package repository.
+  Builds and test an orb.
 
-# TODO: Find out how we can dynamically choose an executor depending on
-#       the package type being built.
-#
-# TODO: Should we just pick a generic, linux-based executor?
-#
-# The cli orb is declared in src/@orb.yml
-executor: cli/default
+# The circleci-cli orb is declared in src/@orb.yml
+executor: circleci-cli/default
 
 parameters:
   package-repo:
@@ -19,15 +13,13 @@ parameters:
 
   package-repo-provider:
     description: The backend provider of the package repo.
-    type: enum
-    enum:
-      - circleci-orb
+    type: string
+    default: cricleci-orb
 
   package-type:
     description: The type of package being built.
-    type: enum
-    enum:
-      - circleci-orb
+    type: string
+    default: cricleci-orb
 
   versioning-provider:
     description: Which versioning scheme to use when naming the package.

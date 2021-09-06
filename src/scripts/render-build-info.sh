@@ -1,29 +1,31 @@
-set -euo pipefail
+set -eo pipefail
 
 Main() {
-  CheckProvider
+    RunProvider > BUILD-INFO
 
-  source "src/scripts/providers/${PIPELINE_VERSIONING_PROVIDER}/render-build-info.sh"
-  RenderBuildInfo > BUILD-INFO
-
-  echo "BUILD-INFO rendered as:"
-  cat BUILD-INFO
+    echo "BUILD-INFO rendered as:"
+    cat BUILD-INFO
 }
 
 
-CheckProvider() {
+RunProvider() {
   case "$PIPELINE_VERSIONING_PROVIDER" in
 
-    "semver2");;
+    "semver2") SemVer2;;
 
     *)
-       echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'"
+       echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'" 1>&2
        exit 1
        ;;
 
   esac
 }
 
+
+SemVer2() {
+    # TODO: Actually implement this
+    echo "{ \"build_id\": \"dev:alpha\" }"
+}
 
 # Will not run if sourced for bats-core tests.
 # View src/tests for more information.

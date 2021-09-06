@@ -48,29 +48,32 @@ orbs:
 # JOBS. These are used only in the pre-vetting workflow.
 #
 jobs:
-  build-orb:
-    executor: circleci-cli/default
+  prepare-build-info:
+    executor: default
     steps:
       - checkout
 
       - run:
           name: Render BUILD-INFO
           command: |
-             source .circleci/pre-vetting/scripts/render-dev-build-info.sh
+             source .circleci/pre-vetting/scripts/render-build-info.sh
              RenderBuildInfo > BUILD-INFO
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - BUILD-INFO
+
+  build-orb:
+    executor: circleci-cli/default
+    steps:
+      - checkout
 
       - run:
           name: Validate orb
           command: |
             circleci orb pack src > orb.yml
             circleci orb validate orb.yml
-
-      - persist_to_workspace:
-          root: .
-          paths:
-            - orb.yml
-            - BUILD-INFO
-
 
 #
 # WORKFLOWS. Divided in to two stages. The first is a pre-vetting workflow which
@@ -90,6 +93,9 @@ workflows:
   pre-vetting:
     unless: << pipeline.parameters.vet-the-orb >>
     jobs:
+      - prepare-build-info:
+          name: Prepare build info
+
       - orb-tools/lint:
           name: Lint YAML files
           filters:
@@ -129,6 +135,7 @@ workflows:
       - build-orb:
           name: Build and validate the orb
           requires:
+            - Prepare BUILD-INFO
             - Lint YAML files
             - Check scripts syntax
             - Run BATS tests
@@ -173,26 +180,26 @@ workflows:
   # was published by the pre-vetting workflow. At this point, this workflow's
   # job is to use various elements of the orb as a way to vet its correctnes.
   # At the end of this vetting process, the orb will be promoted to a final release.
-  vetting:
-    when: << pipeline.parameters.vet-the-orb >>
-    jobs:
-      - pipeline/build-and-test:
-          name: build-and-test
-          context: orb-publishing
-          filters:
-            branches:
-              only:
-                - main
-                - maint/.*
-            tags:
-              ignore:
-                - .*
-
-          package-repo: relaxdiego/package-pipeline
-          package-repo-provider: circleci-orb
-          package-type: circleci-orb
-          versioning-provider: semver2
-
+  # vetting:
+  #   when: << pipeline.parameters.vet-the-orb >>
+  #   jobs:
+  #     - pipeline/build-and-test:
+  #         name: build-and-test
+  #         context: orb-publishing
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #               - maint/.*
+  #           tags:
+  #             ignore:
+  #               - .*
+  #
+  #         package-repo: relaxdiego/package-pipeline
+  #         package-repo-provider: circleci-orb
+  #         package-type: circleci-orb
+  #         versioning-provider: semver2
+  #
       # - pipeline/validate-and-promote:
       #     name: dev
       #     requires:

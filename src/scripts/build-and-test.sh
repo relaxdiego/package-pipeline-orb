@@ -1,24 +1,33 @@
-set -euo pipefail
+set -eo pipefail
 
 Main() {
-  CheckPackageType
-
-  source "src/scripts/providers/${PIPELINE_PACKAGE_TYPE}/build-and-test.sh"
-  BuildAndTest
+  RunProvider
 }
 
 
-CheckPackageType() {
+RunProvider() {
   case "$PIPELINE_PACKAGE_TYPE" in
 
-    "circleci-orb");;
+    "circleci-orb") CircleCIOrb;;
 
     *)
-      echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'"
+      echo "FATAL: Unknown PIPELINE_PACKAGE_TYPE '$PIPELINE_PACKAGE_TYPE'" 1>&2
       exit 1
     ;;
 
   esac
+}
+
+
+# The job that requires this provider must use the circle-cli executor
+CircleCIOrb() {
+    echo "Packing orb to orb.yml"
+    circleci orb pack src > orb.yml
+
+    echo "Validating orb"
+    circleci orb validate orb.yml
+
+    echo "BuildAndTestCircleCIOrb completed"
 }
 
 
