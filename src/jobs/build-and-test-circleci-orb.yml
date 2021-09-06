@@ -11,16 +11,6 @@ parameters:
       depend on the value of package-repo-provider.
     type: string
 
-  package-repo-provider:
-    description: The backend provider of the package repo.
-    type: string
-    default: cricleci-orb
-
-  package-type:
-    description: The type of package being built.
-    type: string
-    default: cricleci-orb
-
   versioning-provider:
     description: Which versioning scheme to use when naming the package.
     type: enum
@@ -33,8 +23,6 @@ steps:
       command: |
         echo "
         package-repo         : << parameters.package-repo >>
-        package-repo-provider: << parameters.package-repo-provider >>
-        package-type         : << parameters.package-type >>
         versioning-provider  : << parameters.versioning-provider >>
         "
 
@@ -52,7 +40,7 @@ steps:
   - run:
       name: Build and test
       environment:
-        PIPELINE_PACKAGE_TYPE: << parameters.package-type >>
+        PIPELINE_PACKAGE_TYPE: circleci-orb
       command: <<include(scripts/build-and-test.sh)>>
 
   - jq/install

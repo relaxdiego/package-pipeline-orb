@@ -256,10 +256,7 @@ workflows:
               ignore:
                 - .*
 
-          package-repo: relaxdiego/package-pipeline
-          package-repo-provider: circleci-orb
-          package-type: circleci-orb
-          versioning-provider: semver2
+          orb-repo: << pipeline.parameters.orb-repo >>
 
       # - pipeline/validate-and-promote:
       #     name: dev
