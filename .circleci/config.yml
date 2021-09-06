@@ -1,13 +1,183 @@
 version: 2.1
 
-orbs:
-  pipeline: relaxdiego/package-pipeline@dev:alpha
+#
+# PIPELINE PARAMETERS
+#
+parameters:
+  vet-the-orb:
+    description: >
+      This is an internal parameter. DO NOT SET THIS. It's used internally by
+      this config to determine whether the vetting workflow should be executed.
+      This is set to true by the pre-vetting workflow after it has packed to
+      orb and pushed it to the orb registry with the version
+      dev:<X.Y.Z>-<GIT-SHORT-SHA>.<PIPELINE-INSTANCE-ID>
+    type: boolean
+    default: false
 
+  orb-version-to-vet:
+    description: >
+      DO NOT SET THIS. This is an internal parameter used by this pipeline
+      to determine which version of the orb to run vet. The value for this
+      parmeter will be set by the pre-vetting workflow.
+    type: string
+    # This version must have been already published manually in order for
+    # this pipeline to work. Note that during the execution of the pre-vetting
+    # workflow, this is just a placeholder (that must point to a valid version).
+    # When this pipeline triggers the post-dev workflow, it will change
+    # this to the correct value.
+    default: "0.1"
+
+
+#
+# ORBS. The pipeline orb is used only in the vetting workflow.
+#
+orbs:
+  pipeline: relaxdiego/package-pipeline@<< pipeline.parameters.orb-version-to-vet >>
+  # https://circleci.com/developer/orbs/orb/circleci/orb-tools
+  orb-tools: circleci/orb-tools@10.0
+  # https://circleci.com/developer/orbs/orb/circleci/bats
+  bats: circleci/bats@1.0
+  # https://circleci.com/developer/orbs/orb/circleci/shellcheck
+  shellcheck: circleci/shellcheck@2.0
+  # https://circleci.com/developer/orbs/orb/circleci/circleci-cli
+  circleci-cli: circleci/circleci-cli@0.1
+  # https://circleci.com/developer/orbs/orb/circleci/jq
+
+
+#
+# JOBS. These are used only in the pre-vetting workflow.
+#
+jobs:
+  build-orb:
+    executor: circleci-cli/default
+    steps:
+      - checkout
+
+      - run:
+          name: Render BUILD-INFO
+          command: |
+             source .circleci/pre-vetting/scripts/render-dev-build-info.sh
+             RenderBuildInfo > BUILD-INFO
+
+      - run:
+          name: Validate orb
+          command: |
+            circleci orb pack src > orb.yml
+            circleci orb validate orb.yml
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - orb.yml
+            - BUILD-INFO
+
+
+#
+# WORKFLOWS. Divided in to two stages. The first is a pre-vetting workflow which
+#            concerned with vetting, building, and publishing a dev release orb.
+#            It will then trigger the the vetting workflow which will subjet the
+#            pre-release orb through various integration tests. At the end of
+#            this process, the vetting workflow will wait for approval to promote
+#            the orb to a production release.
 workflows:
-  pipeline:
+  # Prepare the orb and publish it as a dev releaseso that the vetting workflow
+  # can run against the version that we create and publish here
+  #
+  # All jobs in this workflow MUST NOT use elements defined in the orb since
+  # we cannot depend on unvetted elements in the SUT to perform our pre-vetting!
+  #
+  # IMPORTANT: All jobs in this workflow SHOULD not use the orb being developed!
+  pre-vetting:
+    unless: << pipeline.parameters.vet-the-orb >>
     jobs:
-      - pipeline/build:
-          name: build
+      - orb-tools/lint:
+          name: Lint YAML files
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+      - shellcheck/check:
+          name: Check scripts syntax
+          dir: ./src/scripts
+          exclude: SC2148
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+      - bats/run:
+          name: Run BATS tests
+          path: ./src/tests
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+      - build-orb:
+          name: Build and validate the orb
+          requires:
+            - Lint YAML files
+            - Check scripts syntax
+            - Run BATS tests
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+      # - publish-pre-release-orb:
+      #     name: Publish dev pre-release
+      #     context: orb-publishing
+      #     requires:
+      #       - Build and test the orb
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - maint/.*
+      #       tags:
+      #         ignore:
+      #           - .*
+      #
+      #       steps:
+      #         - persist_to_workspace:
+      #             root: .
+      #             paths:
+      #               - BUILD-INFO
+      #               - orb.yml
+      #
+      # - trigger-vetting-workflow:
+      #     name: Trigger post-dev workflow
+      #     context: orb-publishing
+      #     requires:
+      #       - Publish dev pre-release
+
+  # This workflow is triggered by the pre-vetting workflow. By this time,
+  # pipeline.parameters.pipeline will have already been set to the orb that
+  # was published by the pre-vetting workflow. At this point, this workflow's
+  # job is to use various elements of the orb as a way to vet its correctnes.
+  # At the end of this vetting process, the orb will be promoted to a final release.
+  vetting:
+    when: << pipeline.parameters.vet-the-orb >>
+    jobs:
+      - pipeline/build-and-test:
+          name: build-and-test
           context: orb-publishing
           filters:
             branches:
