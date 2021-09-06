@@ -33,5 +33,5 @@ if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
 
     build_id="${major_ver}.${minor_ver}.${patch_ver}+${git_short_sha}.${pipeline_instance_number}"
 
-    echo "{"build_id": "$build_id"}"
+    echo "{\"build_id\": \"$build_id\"}"
 fi
