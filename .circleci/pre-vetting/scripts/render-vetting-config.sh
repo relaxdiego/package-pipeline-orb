@@ -2,4 +2,5 @@ set -eo pipefail
 
 PIPELINE_BUILD_ID=$(jq -r .build_id ~/workspace/BUILD-INFO)
 
-envsubst < .circleci/pre-vetting/templates/vetting-config.template.yml > vetting-config.yml
+# Poor man's rendering engine
+eval "echo \"$( cat .circleci/pre-vetting/templates/vetting-config.template.yml)\"" > vetting-config.yml
