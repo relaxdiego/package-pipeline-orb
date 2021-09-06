@@ -94,7 +94,7 @@ workflows:
     unless: << pipeline.parameters.vet-the-orb >>
     jobs:
       - prepare-build-info:
-          name: Prepare build info
+          name: Prepare BUILD-INFO
 
       - orb-tools/lint:
           name: Lint YAML files
