@@ -57,9 +57,10 @@ steps:
 
   - jq/install
 
-  - run:
-      name: Publish the build
-      environment:
-        PIPELINE_PACKAGE_REPO: << parameters.package-repo >>
-        PIPELINE_PACKAGE_REPO_PROVIDER: << parameters.package-repo-provider >>
-      command: <<include(scripts/publish.sh)>>
+  # # This should be in a separate job
+  # - run:
+  #     name: Publish the build
+  #     environment:
+  #       PIPELINE_PACKAGE_REPO: << parameters.package-repo >>
+  #       PIPELINE_PACKAGE_REPO_PROVIDER: << parameters.package-repo-provider >>
+  #     command: <<include(scripts/publish.sh)>>
