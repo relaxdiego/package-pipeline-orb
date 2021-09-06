@@ -54,10 +54,10 @@ jobs:
       - checkout
 
       - run:
-          name: Render BUILD-INFO
+          name: Render dev BUILD-INFO
           command: |
-             source .circleci/pre-vetting/scripts/render-build-info.sh
-             RenderBuildInfo > BUILD-INFO
+             source .circleci/pre-vetting/scripts/render-dev-build-info.sh
+             RenderDevBuildInfo > BUILD-INFO
 
       - persist_to_workspace:
           root: .
