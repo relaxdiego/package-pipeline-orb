@@ -76,15 +76,19 @@ jobs:
       - checkout
 
       - run:
-          name: Validate orb
+          name: Build orb
           command: |
             cat > orb.yml \<<EOF
-            # $(jq -c . ~/workspace/BUILD_INFO)
+            # $(jq -c . ~/workspace/BUILD-INFO)
             EOF
             circleci orb pack src >> orb.yml
-            circleci orb validate orb.yml
 
             head -n5 orb.yml
+
+      - run:
+          name: Validate orb
+          command: |
+            circleci orb validate orb.yml
 
       - persist_to_workspace:
           root: .
