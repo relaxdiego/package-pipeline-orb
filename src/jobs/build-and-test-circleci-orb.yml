@@ -16,6 +16,7 @@ parameters:
     type: enum
     enum:
       - semver2
+    default: semver2
 
 steps:
   - run:
