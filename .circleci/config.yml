@@ -112,7 +112,7 @@ jobs:
       - run:
           name: Render the vetting configuration
           command: |
-            bash .circleci/pre-vetting/scripts/render-vetting-config.sh > vetting-config.yml
+            bash .circleci/pre-vetting/scripts/render-dev-build-vetting-config.sh > vetting-config.yml
 
       - continuation/continue:
           configuration_path: vetting-config.yml
