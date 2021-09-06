@@ -12,6 +12,6 @@ PIPELINE_BUILD_ID=$(jq -r .build_id ~/workspace/BUILD-INFO)
 set -x
 circleci orb publish \
   --skip-update-check \
-  orb.yml \
+  ~/workspace/orb.yml \
   "${PIPELINE_PACKAGE_REPO}@dev:${PIPELINE_BUILD_ID}" \
   --token "$CIRCLE_TOKEN"
