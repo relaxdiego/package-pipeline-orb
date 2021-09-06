@@ -114,6 +114,19 @@ jobs:
           command: |
             bash .circleci/pre-vetting/scripts/publish.sh
 
+  trigger-vetting-workflow:
+    executor: circleci-cli/default
+    steps:
+      - attach_workspace:
+          at: .
+
+      - jq/install
+
+      - run:
+          name: Trigger the vetting workflow via the Circle CI API
+          command: |
+            bash .circleci/pre-vetting/scripts/trigger-vetting-workflow.sh
+
 
 #
 # WORKFLOWS. Divided in to two stages. The first is a pre-vetting workflow which
@@ -209,18 +222,11 @@ workflows:
               ignore:
                 - .*
 
-      #       steps:
-      #         - persist_to_workspace:
-      #             root: .
-      #             paths:
-      #               - BUILD-INFO
-      #               - orb.yml
-      #
-      # - trigger-vetting-workflow:
-      #     name: Trigger post-dev workflow
-      #     context: orb-publishing
-      #     requires:
-      #       - Publish dev pre-release
+      - trigger-vetting-workflow:
+          name: Trigger vetting workflow
+          context: orb-publishing
+          requires:
+            - Publish orb as a dev pre-release
 
   # This workflow is triggered by the pre-vetting workflow. By this time,
   # pipeline.parameters.pipeline will have already been set to the orb that
