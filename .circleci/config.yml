@@ -238,25 +238,25 @@ workflows:
   # was published by the pre-vetting workflow. At this point, this workflow's
   # job is to use various elements of the orb as a way to vet its correctnes.
   # At the end of this vetting process, the orb will be promoted to a final release.
-  vetting:
-    when: << pipeline.parameters.vet-the-dev-build >>
-    jobs:
+  # vetting:
+  #   when: << pipeline.parameters.vet-the-dev-build >>
+  #   jobs:
       #
       # Orb Pipeline Vetting
       #
-      - pipeline/build-and-test-circleci-orb:
-          name: build-and-test CircleCI orb
-          context: orb-publishing
-          filters:
-            branches:
-              only:
-                - main
-                - maint/.*
-            tags:
-              ignore:
-                - .*
-
-          orb-repo: << pipeline.parameters.orb-repo >>
+      # - pipeline/build-and-test-circleci-orb:
+      #     name: build-and-test CircleCI orb
+      #     context: orb-publishing
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - maint/.*
+      #       tags:
+      #         ignore:
+      #           - .*
+      #
+      #     orb-repo: << pipeline.parameters.orb-repo >>
 
       # - pipeline/validate-and-promote:
       #     name: dev
