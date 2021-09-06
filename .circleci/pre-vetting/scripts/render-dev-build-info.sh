@@ -2,7 +2,7 @@ set -eo pipefail
 
 if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
     echo "Getting get latest tag in $CIRCLE_BRANCH" 1>&2
-    tag=$(git tag --merged "$CIRCLE_BRANCH" "v*.*.*"  | head -n1)
+    tag=$(git tag --list --merged "$CIRCLE_BRANCH" "v*.*.*"  | head -n1)
 
     if [ ! -z "$tag" ]; then
         echo "Found latest $tag" 1>&2
