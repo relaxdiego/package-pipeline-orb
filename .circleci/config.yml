@@ -56,8 +56,10 @@ jobs:
       - run:
           name: Render dev BUILD-INFO
           command: |
-             source .circleci/pre-vetting/scripts/render-dev-build-info.sh
-             RenderDevBuildInfo > BUILD-INFO
+             bash .circleci/pre-vetting/scripts/render-dev-build-info.sh > BUILD-INFO
+
+             echo "BUILD-INFO contents:"
+             cat BUILD-INFO
 
       - persist_to_workspace:
           root: .
