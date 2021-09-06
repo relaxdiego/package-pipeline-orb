@@ -9,17 +9,16 @@ parameters:
     type: string
     default: relaxdiego/package-pipeline
 
-  vet-the-orb:
+  vet-the-orb-dev-build:
     description: >
       This is an internal parameter. DO NOT SET THIS. It's used internally by
       this config to determine whether the vetting workflow should be executed.
-      This is set to true by the pre-vetting workflow after it has packed to
-      orb and pushed it to the orb registry with the version
-      dev:<X.Y.Z>-<GIT-SHORT-SHA>.<PIPELINE-INSTANCE-ID>
+      This is set to true by the pre-vetting workflow after it has packed and
+      published the orb with the dev label.
     type: boolean
     default: false
 
-  orb-version-to-vet:
+  orb-dev-build-id:
     description: >
       DO NOT SET THIS. This is an internal parameter used by this pipeline
       to determine which version of the orb to run vet. The value for this
@@ -34,10 +33,9 @@ parameters:
 
 
 #
-# ORBS. The pipeline orb is used only in the vetting workflow.
+# ORBS.
 #
 orbs:
-  pipeline: relaxdiego/package-pipeline@<< pipeline.parameters.orb-version-to-vet >>
   # https://circleci.com/developer/orbs/orb/circleci/orb-tools
   orb-tools: circleci/orb-tools@10.0
   # https://circleci.com/developer/orbs/orb/circleci/bats
@@ -49,6 +47,9 @@ orbs:
   # https://circleci.com/developer/orbs/orb/circleci/jq
   jq: circleci/jq@2.2
 
+  # This orb is only used by the vetting workflow, after the pre-vetting
+  # workflow has built and published it with a dev label.
+  pipeline: relaxdiego/package-pipeline@<< pipeline.parameters.orb-dev-build-id >>
 
 #
 # JOBS. These are used only in the pre-vetting workflow.
