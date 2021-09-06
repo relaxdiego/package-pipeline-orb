@@ -110,9 +110,12 @@ jobs:
       - checkout
 
       - run:
-          name: Trigger the vetting workflow
+          name: Render the vetting configuration
           command: |
             bash .circleci/pre-vetting/scripts/render-vetting-config.sh > vetting-config.yml
+
+      - continuation/continue:
+          name: Trigger the vetting workflow
           configuration_path: vetting-config.yml
 
 
