@@ -193,7 +193,7 @@ workflows:
           name: Wait for approval for release to production
           type: approval
           requires:
-            - Build and validate the orb
+            - Build the validate the orb
 
 
       - publish-dev-orb:
