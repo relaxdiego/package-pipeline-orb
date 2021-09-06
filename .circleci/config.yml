@@ -181,7 +181,7 @@ workflows:
 
 
       - build-dev-orb:
-          name: Build the validate the orb
+          name: Build the validated orb
           requires:
             - Prepare BUILD-INFO
             - Lint YAML files
@@ -197,17 +197,10 @@ workflows:
                 - .*
 
 
-      - approve-for-release:
-          name: Wait for approval to release to production
-          requires:
-            - Build the validate the orb
-          type: approval
-
-
       - publish-dev-orb:
           name: Publish orb as a dev pre-release
           requires:
-            - Wait for approval to release to production
+            - Build the validated orb
           context: orb-publishing
           filters:
             branches:
