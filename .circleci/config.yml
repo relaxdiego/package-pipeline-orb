@@ -105,9 +105,11 @@ jobs:
       PIPELINE_PACKAGE_REPO: << pipeline.parameters.orb-repo >>
     steps:
       - attach_workspace:
-          at: .
+          at: ~/workspace
 
       - jq/install
+
+      - checkout
 
       - run:
           name: Publish the dev orb
@@ -118,7 +120,7 @@ jobs:
     executor: circleci-cli/default
     steps:
       - attach_workspace:
-          at: .
+          at: ~/workspace
 
       - jq/install
 

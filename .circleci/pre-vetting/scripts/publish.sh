@@ -7,7 +7,7 @@ if [ -z "$CIRCLE_TOKEN" ]; then
     exit 1
 fi
 
-PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+PIPELINE_BUILD_ID=$(jq -r .build_id ~/workspace/BUILD-INFO)
 
 set -x
 circleci orb publish \
