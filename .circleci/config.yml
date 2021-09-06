@@ -49,7 +49,7 @@ orbs:
 #
 jobs:
   prepare-build-info:
-    executor: default
+    executor: circleci-cli/default
     steps:
       - checkout
 
