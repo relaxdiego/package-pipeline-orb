@@ -79,7 +79,7 @@ jobs:
           name: Validate orb
           command: |
             cat > orb.yml \<<EOF
-            # $(jq -c . BUILD_INFO)
+            # $(jq -c . ~/workspace/BUILD_INFO)
             EOF
             circleci orb pack src >> orb.yml
             circleci orb validate orb.yml
