@@ -1,15 +1,10 @@
 description: >
-  Builds and test an orb.
+  Renders the BUILD-INFO file
 
-# The circleci-cli orb is declared in src/@orb.yml
-executor: circleci-cli/default
+docker:
+  - image: cimg/base:2020.04
 
 parameters:
-  orb-repo:
-    description: >
-      The name or URL of the orb repo
-    type: string
-
   versioning-provider:
     description: Which versioning scheme to use when naming the package.
     type: enum
@@ -22,7 +17,6 @@ steps:
       name: Print debug info
       command: |
         echo "
-        orb-repo           : << parameters.orb-repo >>
         versioning-provider: << parameters.versioning-provider >>
         "
 
@@ -34,14 +28,7 @@ steps:
         PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
       command: <<include(scripts/render-build-info.sh)>>
 
-  - run:
-      name: Build and test
-      environment:
-        PIPELINE_PACKAGE_TYPE: circleci-orb
-      command: <<include(scripts/build-and-test.sh)>>
-
   - persist_to_workspace:
       root: .
       paths:
         - BUILD-INFO
-        - orb.yml

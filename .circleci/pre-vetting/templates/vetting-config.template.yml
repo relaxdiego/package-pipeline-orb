@@ -9,11 +9,10 @@ workflows:
     jobs:
 
       #
-      # Orb Pipeline Vetting
+      # Integration test for Docker jobs
       #
 
-      - pipeline/build-and-test-circleci-orb:
-          name: build-and-test CircleCI orb
+      - pipeline/render-build-info:
           filters:
             branches:
               only:
@@ -23,4 +22,32 @@ workflows:
               ignore:
                 - .*
 
-          orb-repo: ${PIPELINE_ORB_REPO}
+      - pipeline/docker-static-analysis:
+          requires:
+            - pipeline/render-build-info
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+          dockerfile: src/tests/docker/Dockerfile
+
+
+      # - pipeline/docker-build:
+      #     name: Build and test an orb
+      #     requires:
+      #       - pipeline/packer-static-analysis
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - maint/.*
+      #       tags:
+      #         ignore:
+      #           - .*
+      #
+      #     dockerfile: tests/docker/Dockerfile

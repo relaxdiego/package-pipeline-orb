@@ -1,0 +1,40 @@
+description: >
+  Runs static analysis tasks against the Dockerfile
+
+docker:
+  - image: cimg/node:16.8
+
+parameters:
+  dockerfile:
+    description: >
+      The path to the Dockerfile file
+    type: string
+
+steps:
+  - run:
+      name: Print debug info
+      command: |
+        echo "
+        dockerfile: << parameters.dockerfile >>
+        "
+
+  - attach_workspace:
+      at: ~/workspace
+
+  - checkout
+
+  - run:
+      name: Install dockerlinter
+      command: |
+        npm install --global dockerlinter
+
+  - run:
+      name: Run linter against Dockerfile
+      command: |
+        dockerfilelinter -f << parameters.dockerfile >>
+
+  - persist_to_workspace:
+      root: .
+      paths:
+        - BUILD-INFO
+        - orb.yml
