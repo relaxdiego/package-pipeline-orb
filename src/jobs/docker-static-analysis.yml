@@ -32,9 +32,3 @@ steps:
       name: Run linter against Dockerfile
       command: |
         dockerfilelinter -f << parameters.dockerfile >>
-
-  - persist_to_workspace:
-      root: .
-      paths:
-        - BUILD-INFO
-        - orb.yml
