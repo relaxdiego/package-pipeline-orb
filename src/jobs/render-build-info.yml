@@ -17,7 +17,7 @@ steps:
       name: Print debug info
       command: |
         echo "
-        versioning-provider: << parameters.versioning_provider >>
+        versioning_provider: << parameters.versioning_provider >>
         "
 
   - checkout
