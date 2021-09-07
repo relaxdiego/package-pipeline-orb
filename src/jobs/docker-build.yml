@@ -4,7 +4,7 @@ description: >
   authorized users credentials in DOCKER_USER and DOCKER_PASS.
 
 docker:
-  - image: docker:17.05.0-ce-git
+  - image: circleci/buildpack-deps:stretch
 
 parameters:
   dockerfile:
@@ -31,6 +31,10 @@ steps:
       at: ~/workspace
 
   - checkout
+
+  # https://circleci.com/docs/2.0/building-docker-images/
+  - setup_remote_docker:
+      docker_layer_caching: true
 
   - run:
       name: Build the image
