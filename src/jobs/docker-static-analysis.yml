@@ -26,9 +26,9 @@ steps:
   - run:
       name: Install dockerlinter
       command: |
-        npm install dockerlinter
+        sudo npm install --no-progress --global dockerfilelint
 
   - run:
       name: Run linter against Dockerfile
       command: |
-        dockerfilelinter -f << parameters.dockerfile >>
+        dockerfilelint << parameters.dockerfile >>
