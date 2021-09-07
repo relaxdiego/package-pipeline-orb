@@ -37,17 +37,17 @@ workflows:
           dockerfile: src/tests/docker/Dockerfile
 
 
-      # - pipeline/docker-build:
-      #     name: Build and test an orb
-      #     requires:
-      #       - pipeline/packer-static-analysis
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
-      #           - maint/.*
-      #       tags:
-      #         ignore:
-      #           - .*
-      #
-      #     dockerfile: tests/docker/Dockerfile
+      - pipeline/docker-build:
+          requires:
+            - pipeline/docker-static-analysis
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+          dockerfile: src/tests/docker/Dockerfile
+          tag: relaxdiego/package-pipeline-test:0.1.0

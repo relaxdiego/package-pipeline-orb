@@ -1,0 +1,43 @@
+description: >
+  Builds, tags, and pushes a Docker image. If you are pushing to a private
+  registry, make sure to provide this job with a context that provides an
+  authorized users credentials in DOCKER_USER and DOCKER_PASS.
+
+docker:
+  - image: docker:17.05.0-ce-git
+
+parameters:
+  dockerfile:
+    description: >
+      The path to the Dockerfile file
+    type: string
+
+  tag:
+    description: >
+      The tag to apply to the built image. If you are pushing to a location
+      other than Docker Hub, make sure to supply a full URL
+    type: string
+
+steps:
+  - run:
+      name: Print debug info
+      command: |
+        echo "
+        dockerfile: << parameters.dockerfile >>
+        tag       : << parameters.tag >>
+        "
+
+  - attach_workspace:
+      at: ~/workspace
+
+  - checkout
+
+  - run:
+      name: Build the image
+      command: |
+        docker build -t << parameters.tag >> $(dirname << parameters.dockerfile >>)
+
+  - run:
+      name: Push the image to the registry
+      command: |
+        docker push << parameters.tag >>
