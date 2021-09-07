@@ -18,6 +18,15 @@ parameters:
       other than Docker Hub, make sure to supply a full URL
     type: string
 
+  docker-layer-caching:
+    description: >
+      Enable docker layer caching in Circle CI to speed up your docker
+      builds. See https://circleci.com/docs/2.0/docker-layer-caching/
+      for more information.
+    type: boolean
+    default: false
+
+
 steps:
   - run:
       name: Print debug info
@@ -33,7 +42,8 @@ steps:
   - checkout
 
   # https://circleci.com/docs/2.0/building-docker-images/
-  - setup_remote_docker
+  - setup_remote_docker:
+      docker_layer_caching: << parameters.docker-layer-caching >>
 
   - run:
       name: Build the image
