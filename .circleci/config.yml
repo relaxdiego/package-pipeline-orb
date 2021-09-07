@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Render dev BUILD-INFO
           command: |
-             bash .circleci/pre-vetting/scripts/render-dev-build-info.sh > BUILD-INFO
+             bash .circleci/scripts/render-build-info.sh > BUILD-INFO
 
              echo "BUILD-INFO contents:"
              cat BUILD-INFO
@@ -95,7 +95,7 @@ jobs:
       - run:
           name: Publish the dev orb
           command: |
-            bash .circleci/pre-vetting/scripts/publish.sh
+            bash .circleci/scripts/publish.sh
 
   trigger-vetting-workflow:
     executor: continuation/default
@@ -112,14 +112,14 @@ jobs:
       - run:
           name: Render the vetting configuration
           command: |
-            bash .circleci/pre-vetting/scripts/render-dev-build-vetting-config.sh > vetting-config.yml
+            bash .circleci/scripts/render-dev-build-vetting-config.sh > vetting-config.yml
 
       - continuation/continue:
           configuration_path: vetting-config.yml
 
 
 workflows:
-  build-and-publish:
+  prepare-orb:
     jobs:
       - prepare-build-info:
           name: Prepare BUILD-INFO
