@@ -5,7 +5,7 @@ docker:
   - image: cimg/base:2020.04
 
 parameters:
-  versioning-provider:
+  versioning_provider:
     description: Which versioning scheme to use when naming the package.
     type: enum
     enum:
@@ -17,7 +17,7 @@ steps:
       name: Print debug info
       command: |
         echo "
-        versioning-provider: << parameters.versioning-provider >>
+        versioning-provider: << parameters.versioning_provider >>
         "
 
   - checkout
@@ -25,7 +25,7 @@ steps:
   - run:
       name: Render BUILD-INFO
       environment:
-        PIPELINE_VERSIONING_PROVIDER: << parameters.versioning-provider >>
+        PIPELINE_VERSIONING_PROVIDER: << parameters.versioning_provider >>
       command: <<include(scripts/render-build-info.sh)>>
 
   - persist_to_workspace:
