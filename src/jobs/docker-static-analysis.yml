@@ -1,11 +1,12 @@
 description: >
-  Runs static analysis tasks against the Dockerfile
+  Runs static analysis tasks against a Dockerfile. This job currently
+  only runs dockerfilelint.
 
 docker:
   - image: cimg/node:16.8
 
 parameters:
-  dockerfile:
+  docker_file:
     description: >
       The path to the Dockerfile file
     type: string
@@ -15,20 +16,14 @@ steps:
       name: Print debug info
       command: |
         echo "
-        dockerfile: << parameters.dockerfile >>
+        docker_file: << parameters.docker_file >>
         "
-
-  - attach_workspace:
-      at: ~/workspace
 
   - checkout
 
   - run:
-      name: Install dockerlinter
+      name: Run linter against the Dockerfile
+      environment:
+        PL_DOCKER_FILE: << parameters.docker_file >>
+      command: <<include(scripts/run-.sh)>>
       command: |
-        sudo npm install --no-progress --global dockerfilelint
-
-  - run:
-      name: Run linter against Dockerfile
-      command: |
-        dockerfilelint << parameters.dockerfile >>

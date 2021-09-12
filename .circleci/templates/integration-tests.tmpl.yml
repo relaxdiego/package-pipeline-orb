@@ -29,28 +29,15 @@ workflows:
               ignore:
                 - .*
 
+          versioning_scheme: semver2
+
       #
       # Integration test for Docker jobs
       #
 
-      - pipeline/docker-static-analysis:
-          requires:
-            - pipeline/render-build-info
-          filters:
-            branches:
-              only:
-                - main
-                - maint/.*
-            tags:
-              ignore:
-                - .*
-
-          dockerfile: src/tests/docker/Dockerfile
-
-
-      # - pipeline/docker-build:
+      # - pipeline/build-docker:
       #     requires:
-      #       - pipeline/docker-static-analysis
+      #       - pipeline/render-build-info
       #     filters:
       #       branches:
       #         only:
@@ -60,5 +47,5 @@ workflows:
       #         ignore:
       #           - .*
       #
-      #     dockerfile: src/tests/docker/Dockerfile
-      #     tag: relaxdiego/package-pipeline-test:0.1.0
+      #     dockerfile_path: src/tests/docker/Dockerfile
+      #     docker_repo: relaxdiego/package-pipeline-test

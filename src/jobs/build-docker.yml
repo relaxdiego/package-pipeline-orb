@@ -1,0 +1,45 @@
+description: >
+  Builds a Docker image.
+
+docker:
+  - image: circleci/buildpack-deps:stretch
+
+parameters:
+  dockerfile_path:
+    description: >
+      The path to the Dockerfile
+    type: string
+
+  docker_image_name:
+    description: >
+      The name to give to the container image. If you are going to push it to a
+      location other than Docker Hub, make sure to supply a full URL. Do not
+      include the TAG since that will be derived from the BUILD-INFO file.
+    type: string
+
+  docker_layer_caching:
+    description: >
+      Enable docker layer caching in Circle CI to speed up your docker
+      builds. See https://circleci.com/docs/2.0/docker-layer-caching/
+      for more information.
+    type: boolean
+    default: false
+
+
+steps:
+  - attach_workspace:
+      at: ~/workspace
+
+  - checkout
+
+  # https://circleci.com/docs/2.0/building-docker-images/
+  - setup_remote_docker:
+      docker_layer_caching: << parameters.docker_layer_caching >>
+
+  - run:
+      name: Build the Docker image
+      environment:
+        PL_BUILD_INFO_PATH: ~/workspace/BUILD-INFO
+        PL_DOCKERFILE_PATH: << parameters.dockerfile_path >>
+        PL_DOCKER_IMAGE_NAME: << parameters.docker_tag >>
+      command: <<include(scripts/build/docker.sh)>>
