@@ -97,7 +97,7 @@ jobs:
           command: |
             bash .circleci/scripts/publish.sh
 
-  trigger-vetting-workflow:
+  trigger-integration-tests:
     executor: continuation/default
     environment:
       PIPELINE_ORB_REPO: << pipeline.parameters.orb-repo >>
@@ -110,20 +110,23 @@ jobs:
       - checkout
 
       - run:
-          name: Render the vetting configuration
+          name: Render the integration tests workflow
           command: |
-            bash .circleci/scripts/render-dev-build-vetting-config.sh > vetting-config.yml
+            bash .circleci/scripts/render-integration-tests.sh > integration-tests.yml
 
       - continuation/continue:
-          configuration_path: vetting-config.yml
+          configuration_path: integration-tests.yml
 
 
 workflows:
-  prepare-orb:
+  build-orb:
     jobs:
       - prepare-build-info:
           name: Prepare BUILD-INFO
 
+      #
+      # Orb unit tests and linters
+      #
 
       - orb-tools/lint:
           name: Lint YAML files
@@ -198,8 +201,8 @@ workflows:
                 - .*
 
 
-      - trigger-vetting-workflow:
-          name: Trigger vetting workflow
+      - trigger-integration-tests:
+          name: Trigger integration tests
           context: orb-publishing
           requires:
             - Publish orb as a dev pre-release

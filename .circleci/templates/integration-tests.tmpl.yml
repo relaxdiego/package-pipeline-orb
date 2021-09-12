@@ -1,3 +1,15 @@
+#
+# This template is a dynamic configuration that the main .circleci/config.yml
+# renders and then triggers. For more information on dynamic configurations,
+# see https://circleci.com/docs/2.0/dynamic-config/
+#
+# The purpose of this config is to allow our main workflow in .circleci/config.yml
+# to test each of the jobs that we define in src/jobs. In effect, this is an
+# integration test for the orb that this pipeline is building.
+#
+# Yeah, we're using a Circle CI config to test an orb which is essentially
+# a packaged, parameterized Circle CI config. :-)
+#
 version: 2.1
 
 orbs:
