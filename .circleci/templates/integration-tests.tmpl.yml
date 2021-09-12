@@ -25,10 +25,6 @@ workflows:
       #       glance which job failed integration tests.
       #
 
-      #
-      # Integration test for Docker jobs
-      #
-
       - pipeline/render-build-info:
           filters:
             branches:
@@ -38,6 +34,10 @@ workflows:
             tags:
               ignore:
                 - .*
+
+      #
+      # Integration test for Docker jobs
+      #
 
       - pipeline/docker-static-analysis:
           requires:

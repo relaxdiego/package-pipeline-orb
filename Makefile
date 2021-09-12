@@ -17,6 +17,7 @@ publish-orb-dev : validate-orb
 .PHONY: validate-config
 validate-config : publish-orb-dev
 	circleci config validate .circleci/config.yml
+	find .circleci/ -name '*.sh' | xargs shellcheck --shell=bash
 
 
 ##   validate-orb     : Runs circleci orb validate against the orb in src/
@@ -24,6 +25,7 @@ validate-config : publish-orb-dev
 .PHONY: validate-orb
 validate-orb :
 	circleci orb pack src | circleci orb validate -
+	find src/ -name '*.sh' | xargs shellcheck --shell=bash
 
 
 ##   help             : Print this help message.
