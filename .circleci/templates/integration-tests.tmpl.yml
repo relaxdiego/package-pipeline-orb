@@ -24,10 +24,6 @@ workflows:
     jobs:
       - pipeline/render-build-info:
           filters:
-            branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
@@ -39,10 +35,6 @@ workflows:
           requires:
             - pipeline/render-build-info
           filters:
-            branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
