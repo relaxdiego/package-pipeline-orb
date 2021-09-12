@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -eo pipefail
 
 if [ -z "$CIRCLE_TOKEN" ]; then

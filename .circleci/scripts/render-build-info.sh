@@ -1,17 +1,22 @@
+#!/bin/bash
+
 set -eo pipefail
+
 
 if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
     echo "Getting get latest tag in $CIRCLE_BRANCH" 1>&2
     tag=$(git tag --list --merged "$CIRCLE_BRANCH" "v*.*.*"  | head -n1)
 
-    if [ ! -z "$tag" ]; then
+    if [ -n "$tag" ]; then
         echo "Found latest $tag" 1>&2
-        old_build_id=($(echo "$tag" | sed -E 's/v(.*)\.(.*)\.(.*)(\+.*)?/\1 \2 \3/g'))
+
+        old_build_id=()
+        IFS=" " read -r -a old_build_id <<< "$(echo "$tag" | sed -E 's/v([0-9]*)\.([0-9]*)\.([0-9]*)(\+.*)?/\1 \2 \3/g')"
 
         major_ver="${old_build_id[0]}"
         minor_ver="${old_build_id[1]}"
         patch_ver="${old_build_id[2]}"
-        search_start_point=$(git rev-list -n 1 $tag)
+        search_start_point=$(git rev-list -n 1 "$tag")
     else
         major_ver=0
         minor_ver=0
@@ -20,7 +25,7 @@ if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
     fi
 
     echo "Searching for [semver:major] from $search_start_point to HEAD" 1>&2
-    found_logs=$(git log --oneline --grep="\[semver:major\]" $search_start_path HEAD | wc -l)
+    found_logs=$(git log --oneline --grep="\[semver:major\]" "$search_start_point" HEAD | wc -l)
 
     if [ "$found_logs" -gt 0 ]; then
         major_ver=$((major_ver + 1))

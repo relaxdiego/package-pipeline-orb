@@ -1,7 +1,9 @@
+#!/bin/bash
+
 set -euo pipefail
 
 BUILD_ID=$(jq -r .build_id ~/workspace/BUILD-INFO)
-echo $BUILD_ID
+echo "$BUILD_ID"
 
 cat > pipelineparams.json <<EOF
 {
