@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Render BUILD-INFO
           environment:
-            PL_VERSIONING_PROVIDER: semver2
+            PL_VERSIONING_SCHEME: semver2
           command: bash src/scripts/render-build-info.sh
 
       - persist_to_workspace:
