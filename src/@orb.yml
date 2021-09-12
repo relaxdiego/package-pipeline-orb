@@ -1,7 +1,7 @@
 version: 2.1
 
 description: >
-  Build pipelines that follow the Package Pipline pattern.
+  Re-usable elements for authoring a workflow that follows the Pipline Pattern.
 
 display:
   home_url: "https://circleci.com/developer/orbs/orb/relaxdiego/package-pipeline"
