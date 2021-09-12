@@ -45,7 +45,7 @@ workflows:
               ignore:
                 - .*
 
-          dockerfile_path: src/tests/docker/Dockerfile
+          dockerfile_path: src/tests/fixtures/docker/Dockerfile
           docker_image_name: relaxdiego/package-pipeline-test
 
       #
