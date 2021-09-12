@@ -151,7 +151,7 @@ workflows:
 
 
       - shellcheck/check:
-          name: Check scripts syntax
+          name: Run ShellCheck
           filters:
             branches:
               only:
