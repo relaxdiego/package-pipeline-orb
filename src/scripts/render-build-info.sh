@@ -15,7 +15,7 @@ Main() {
 
     esac
 
-    echo "{ \"build_id\": \"$PL_BUILD_ID\" }"
+    echo "{ \"build_id\": \"$PL_BUILD_ID\" }" > BUILD-INFO
 
     echo "BUILD-INFO rendered as:"
     cat BUILD-INFO
