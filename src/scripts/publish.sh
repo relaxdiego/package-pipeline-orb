@@ -1,26 +1,14 @@
-set -eo pipefail
+#!/bin/bash
+
+set -euo pipefail
 
 Main() {
-  CheckEnvVars
-  RunProvider
-}
+    case "$PL_PACKAGE_REPO_PROVIDER" in
 
-
-CheckEnvVars() {
-  if [ -z "$PIPELINE_PACKAGE_REPO" ]; then
-    echo "FATAL: PIPELINE_PACKAGE_REPO is undefined"
-    exit 1
-  fi
-}
-
-
-RunProvider() {
-    case "$PIPELINE_PACKAGE_REPO_PROVIDER" in
-
-        "circleci-orb") CircleCIOrb;;
+        "circleci-orb") PublishCircleCIOrb;;
 
         *)
-            echo "FATAL: Unknown PIPELINE_PACKAGE_REPO_PROVIDER '$PIPELINE_PACKAGE_REPO_PROVIDER'" 1>&2
+            echo "FATAL: Unknown PL_PACKAGE_REPO_PROVIDER '$PL_PACKAGE_REPO_PROVIDER'" 1>&2
             exit 1
             ;;
 
@@ -28,7 +16,11 @@ RunProvider() {
 }
 
 
-CircleCIOrb() {
+#
+# PROVIDERS
+#
+
+PublishCircleCIOrb() {
   if [ -z "$CIRCLE_TOKEN" ]; then
       echo "FATAL: CIRCLE_TOKEN is not defined! To fix this error, make sure the" \
            "job is given a Circle CI context that defines the CIRCLE_TOKEN env var." \
@@ -36,12 +28,24 @@ CircleCIOrb() {
       exit 1
   fi
 
-  PIPELINE_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+  set -x
+
+  PL_ORB_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+  PL_ORB_PATH=${PL_ORB_PATH:="orb.yml"}
+
+  if [ -n "$PL_ORB_IS_PRERELEASE" ]; then
+      PL_ORB_VERSION_PREFIX="dev:"
+  else
+      PL_ORB_VERSION_PREFIX=""
+  fi
+
   circleci orb publish \
     --skip-update-check \
-    orb.yml \
-    "${PIPELINE_PACKAGE_REPO}@${PIPELINE_BUILD_ID}" \
+    "${PL_ORB_PATH}" \
+    "${PL_PACKAGE_REPO}@${PL_ORB_VERSION_PREFIX}${PL_ORB_BUILD_ID}" \
     --token "$CIRCLE_TOKEN"
+
+  { set +x; } 2>/dev/null
 }
 
 

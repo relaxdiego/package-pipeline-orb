@@ -83,7 +83,10 @@ jobs:
   publish-dev-orb:
     executor: circleci-cli/default
     environment:
-      PIPELINE_PACKAGE_REPO: << pipeline.parameters.orb-repo >>
+      PL_ORB_IS_PRERELEASE: true
+      PL_ORB_PATH: ~/workspace
+      PL_PACKAGE_REPO: << pipeline.parameters.orb-repo >>
+      PL_PACKAGE_REPO_PROVIDER: circleci-orb
     steps:
       - attach_workspace:
           at: ~/workspace
@@ -93,9 +96,9 @@ jobs:
       - checkout
 
       - run:
-          name: Publish the dev orb
+          name: Publish the orb
           command: |
-            bash .circleci/scripts/publish.sh
+            bash src/scripts/publish.sh
 
   trigger-integration-tests:
     executor: continuation/default
