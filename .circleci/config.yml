@@ -167,7 +167,6 @@ workflows:
             - Run ShellCheck
             - Run BATS tests
           filters:
-            branches:
             tags:
               ignore:
                 - .*
