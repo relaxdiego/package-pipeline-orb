@@ -109,6 +109,12 @@ jobs:
 
       - checkout
 
+      # The integration test is triggered via a dynamic config so that this
+      # config (.circleci/config.yml) doesn't have to reference via the orbs
+      # stanza dummy version of the orb. By using a dynamic config, we only
+      # need to specify the exact version we want to test AFTER the orb has
+      # been built and published.
+
       - run:
           name: Render the integration tests workflow
           command: |
