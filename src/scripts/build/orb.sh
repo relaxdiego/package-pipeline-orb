@@ -5,14 +5,14 @@ Main() {
     set -x
 
     # Prepend BUILD-INFO contents as a single-line comment
-    echo "# pipeline:build-info $(jq -c . ~/workspace/BUILD-INFO)" > orb.yml
+    echo "# pipeline:build-info $(jq -c . ~/workspace/BUILD-INFO)" > "$PL_ORB_TARGET_FILENAME"
 
-    circleci orb pack src >> orb.yml
-    circleci orb validate orb.yml
+    circleci orb pack "$PL_ORB_SRC_PATH" >> "$PL_ORB_TARGET_FILENAME"
+    circleci orb validate "$PL_ORB_TARGET_FILENAME"
 
     { set +x; } >/dev/null
 
-    head -n5 orb.yml
+    head -n5 "$PL_ORB_TARGET_FILENAME"
 }
 
 

@@ -62,6 +62,9 @@ jobs:
 
       - run:
           name: Build orb
+          environment:
+            PL_ORB_SRC_PATH: src
+            PL_ORB_TARGET_FILENAME: orb.yml
           command: bash src/scripts/build/orb.sh
 
       - persist_to_workspace:

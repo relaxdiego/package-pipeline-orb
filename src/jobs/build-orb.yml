@@ -1,0 +1,34 @@
+description: >
+  Builds a Circle CI orb.
+
+executor: circleci-cli/default
+
+parameters:
+  orb_src_path:
+    description: >
+      The path to the directory that cotains the orb source.
+    type: string
+
+  orb_target_filename:
+    description: >
+      The filename of the orb to be generated.
+    type: string
+    default: orb.yml
+
+steps:
+  - attach_workspace:
+      at: ~/workspace
+
+  - checkout
+
+  - run:
+      name: Build orb
+      environment:
+        PL_ORB_SRC_PATH: << parameters.orb_src_path >>
+        PL_ORB_TARGET_FILENAME: << parameters.orb_target_filename >>
+      command: <<include(scripts/build/orb.sh)>>
+
+  - persist_to_workspace:
+      root: .
+      paths:
+        - << parameters.orb_target_filename >>

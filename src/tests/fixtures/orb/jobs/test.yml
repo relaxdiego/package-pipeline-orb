@@ -1,0 +1,11 @@
+description: >
+  A sample job
+
+docker:
+  - image: cimg/base:2020.04
+
+steps:
+  - run:
+      name: A sample step
+      command: |
+        echo "A sample command"
