@@ -133,10 +133,6 @@ workflows:
       - orb-tools/lint:
           name: Lint YAML files
           filters:
-            branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
@@ -145,10 +141,6 @@ workflows:
       - shellcheck/check:
           name: Run ShellCheck
           filters:
-            branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
@@ -160,10 +152,6 @@ workflows:
       - bats/run:
           name: Run BATS tests
           filters:
-            branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
@@ -180,9 +168,6 @@ workflows:
             - Run BATS tests
           filters:
             branches:
-              only:
-                - main
-                - maint/.*
             tags:
               ignore:
                 - .*
