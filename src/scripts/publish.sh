@@ -30,7 +30,8 @@ PublishCircleCIOrb() {
 
   set -x
 
-  PL_ORB_BUILD_ID=$(jq -r .build_id BUILD-INFO)
+  PL_BUILD_INFO_PATH=${PL_BUILD_INFO_PATH:-"BUILD-INFO"}
+  PL_ORB_BUILD_ID=$(jq -r .build_id "$PL_BUILD_INFO_PATH")
   PL_ORB_PATH=${PL_ORB_PATH:="orb.yml"}
 
   if [ -n "$PL_ORB_IS_PRERELEASE" ]; then

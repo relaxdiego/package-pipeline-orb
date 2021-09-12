@@ -83,8 +83,9 @@ jobs:
   publish-dev-orb:
     executor: circleci-cli/default
     environment:
+      PL_BUILD_INFO_PATH: ~/workspace/BUILD-INFO
       PL_ORB_IS_PRERELEASE: true
-      PL_ORB_PATH: ~/workspace
+      PL_ORB_PATH: ~/workspace/orb.yml
       PL_PACKAGE_REPO: << pipeline.parameters.orb-repo >>
       PL_PACKAGE_REPO_PROVIDER: circleci-orb
     steps:
