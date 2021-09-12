@@ -38,6 +38,8 @@ orbs:
 jobs:
   render-build-info:
     executor: circleci-cli/default
+    environment:
+      PIPELINE_VERSIONING_PROVIDER: semver2
     steps:
       - checkout
 
