@@ -1,32 +1,31 @@
 #!/bin/bash
 
-set -eo pipefail
+set -euo pipefail
 
 Main() {
-    RunProvider > BUILD-INFO
+    case "$PL_VERSIONING_PROVIDER" in
+
+    "semver2") RenderSemVer2BuildInfo > BUILD-INFO;;
+
+    *)
+       echo "FATAL: Unknown PL_VERSIONING_PROVIDER '$PL_VERSIONING_PROVIDER'" 1>&2
+       exit 1
+       ;;
+
+    esac
 
     echo "BUILD-INFO rendered as:"
     cat BUILD-INFO
 }
 
 
-RunProvider() {
-  case "$PIPELINE_VERSIONING_PROVIDER" in
+#
+# PROVIDERS
+#
 
-    "semver2") SemVer2;;
-
-    *)
-       echo "FATAL: Unknown PIPELINE_VERSIONING_PROVIDER '$PIPELINE_VERSIONING_PROVIDER'" 1>&2
-       exit 1
-       ;;
-
-  esac
-}
-
-
-SemVer2() {
+RenderSemVer2BuildInfo() {
     if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
-        echo "Getting get latest tag in $CIRCLE_BRANCH" 1>&2
+        echo "Getting latest git tag in $CIRCLE_BRANCH" 1>&2
         tag=$(git tag --list --merged "$CIRCLE_BRANCH" "v*.*.*"  | head -n1)
 
         if [ -n "$tag" ]; then

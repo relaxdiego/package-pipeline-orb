@@ -36,18 +36,15 @@ orbs:
 
 
 jobs:
-  prepare-build-info:
+  render-build-info:
     executor: circleci-cli/default
     steps:
       - checkout
 
       - run:
-          name: Render dev BUILD-INFO
+          name: Render BUILD-INFO
           command: |
-             bash .circleci/scripts/render-build-info.sh > BUILD-INFO
-
-             echo "BUILD-INFO contents:"
-             cat BUILD-INFO
+             bash src/scripts/render-build-info.sh
 
       - persist_to_workspace:
           root: .
@@ -131,8 +128,8 @@ jobs:
 workflows:
   build-orb:
     jobs:
-      - prepare-build-info:
-          name: Prepare BUILD-INFO
+      - render-build-info:
+          name: Render BUILD-INFO
 
       #
       # Orb unit tests and linters
@@ -182,7 +179,7 @@ workflows:
       - build-orb:
           name: Build the orb
           requires:
-            - Prepare BUILD-INFO
+            - Render BUILD-INFO
             - Lint YAML files
             - Check scripts syntax
             - Run BATS tests
