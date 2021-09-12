@@ -62,11 +62,7 @@ jobs:
 
       - run:
           name: Build orb
-          command: |
-            # Prepend BUILD-INFO contents as a single-line comment
-            echo "# pipeline:build-info $(jq -c . ~/workspace/BUILD-INFO)" > orb.yml
-            circleci orb pack src >> orb.yml
-            head -n5 orb.yml
+          command: bash src/scripts/build/orb.sh
 
       - run:
           name: Validate orb
