@@ -54,7 +54,7 @@ jobs:
           paths:
             - BUILD-INFO
 
-  build-dev-orb:
+  build-orb:
     executor: circleci-cli/default
     steps:
       - attach_workspace:
@@ -80,7 +80,7 @@ jobs:
           paths:
             - orb.yml
 
-  publish-dev-orb:
+  publish-orb-pre-release:
     executor: circleci-cli/default
     environment:
       PL_BUILD_INFO_PATH: ~/workspace/BUILD-INFO
@@ -179,8 +179,8 @@ workflows:
           path: ./src/tests
 
 
-      - build-dev-orb:
-          name: Build the validated orb
+      - build-orb:
+          name: Build the orb
           requires:
             - Prepare BUILD-INFO
             - Lint YAML files
@@ -196,10 +196,10 @@ workflows:
                 - .*
 
 
-      - publish-dev-orb:
+      - publish-orb-pre-release:
           name: Publish orb as a dev pre-release
           requires:
-            - Build the validated orb
+            - Build the orb
           context: orb-publishing
           filters:
             branches:
