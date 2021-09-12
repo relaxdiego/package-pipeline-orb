@@ -20,7 +20,7 @@ workflows:
   #
   # Integration test for Docker jobs
   #
-  docker-integration-tests:
+  integration-test-docker-jobs:
     jobs:
       - pipeline/render-build-info:
           filters:
@@ -48,4 +48,4 @@ workflows:
                 - .*
 
           dockerfile_path: src/tests/docker/Dockerfile
-          docker_repo: relaxdiego/package-pipeline-test
+          docker_image_name: relaxdiego/package-pipeline-test
