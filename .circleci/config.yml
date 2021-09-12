@@ -64,11 +64,6 @@ jobs:
           name: Build orb
           command: bash src/scripts/build/orb.sh
 
-      - run:
-          name: Validate orb
-          command: |
-            circleci orb validate orb.yml
-
       - persist_to_workspace:
           root: .
           paths:

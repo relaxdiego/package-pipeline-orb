@@ -8,6 +8,7 @@ Main() {
     echo "# pipeline:build-info $(jq -c . ~/workspace/BUILD-INFO)" > orb.yml
 
     circleci orb pack src >> orb.yml
+    circleci orb validate orb.yml
 
     { set +x; } >/dev/null
 
