@@ -31,7 +31,10 @@ PublishCircleCIOrb() {
   set -x
 
   PL_BUILD_INFO_PATH=${PL_BUILD_INFO_PATH:-"BUILD-INFO"}
-  PL_ORB_BUILD_ID=$(jq -r .build_id "$PL_BUILD_INFO_PATH")
+
+  # The "eval echo" bit ensures that the path in the string is expanded.
+  # NOTE that strings aren't normally expanded as per the POSIX standard
+  PL_ORB_BUILD_ID=$(jq -r .build_id "$(eval echo "$PL_BUILD_INFO_PATH")")
   PL_ORB_PATH=${PL_ORB_PATH:="orb.yml"}
 
   if [ -n "$PL_ORB_IS_PRERELEASE" ]; then
@@ -40,9 +43,11 @@ PublishCircleCIOrb() {
       PL_ORB_VERSION_PREFIX=""
   fi
 
+  # The "eval echo" bit ensures that the path in the string is expanded
+  # NOTE that strings aren't normally expanded as per the POSIX standard
   circleci orb publish \
     --skip-update-check \
-    "${PL_ORB_PATH}" \
+    "$(eval echo "$PL_ORB_PATH")"
     "${PL_PACKAGE_REPO}@${PL_ORB_VERSION_PREFIX}${PL_ORB_BUILD_ID}" \
     --token "$CIRCLE_TOKEN"
 
