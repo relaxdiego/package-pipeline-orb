@@ -30,9 +30,12 @@ workflows:
 
           versioning_scheme: semver2
 
+      - pipeline/lint-docker:
+          dockerfile_path: src/tests/docker/Dockerfile
 
       - pipeline/build-docker:
           requires:
+            - pipeline/lint-docker
             - pipeline/render-build-info
           filters:
             tags:

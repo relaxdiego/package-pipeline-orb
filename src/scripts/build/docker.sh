@@ -7,8 +7,6 @@ Main() {
     # NOTE that strings aren't normally expanded as per the POSIX standard
     PL_TAG=$(jq -r .build_id "$(eval echo "$PL_BUILD_INFO_PATH")")
 
-    sudo npm install --no-progress --global dockerfilelint
-    dockerfilelint "$(eval echo "$PL_DOCKERFILE_PATH")"
     docker build -t "$PL_DOCKER_IMAGE_NAME:$PL_TAG" "$(eval dirname "$PL_DOCKERFILE_PATH")"
 }
 

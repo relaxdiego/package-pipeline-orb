@@ -1,0 +1,20 @@
+description: >
+  Runs a linter against a Dockerfile.
+
+docker:
+  - image: cimg/node:16.8
+
+parameters:
+  dockerfile_path:
+    description: >
+      The path to the Dockerfile file.
+    type: string
+
+steps:
+  - checkout
+
+  - run:
+      name: Run the linter against the Dockerfile
+      environment:
+        PL_DOCKERFILE_PATH: << parameters.dockerfile_path >>
+      command: <<include(scripts/lint/docker.sh)>>
