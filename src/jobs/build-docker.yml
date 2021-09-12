@@ -41,5 +41,5 @@ steps:
       environment:
         PL_BUILD_INFO_PATH: ~/workspace/BUILD-INFO
         PL_DOCKERFILE_PATH: << parameters.dockerfile_path >>
-        PL_DOCKER_IMAGE_NAME: << parameters.docker_tag >>
+        PL_DOCKER_IMAGE_NAME: << parameters.docker_image_name >>
       command: <<include(scripts/build/docker.sh)>>
