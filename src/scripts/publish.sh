@@ -47,7 +47,7 @@ PublishCircleCIOrb() {
   # NOTE that strings aren't normally expanded as per the POSIX standard
   circleci orb publish \
     --skip-update-check \
-    "$(eval echo "$PL_ORB_PATH")"
+    "$(eval echo "$PL_ORB_PATH")" \
     "${PL_PACKAGE_REPO}@${PL_ORB_VERSION_PREFIX}${PL_ORB_BUILD_ID}" \
     --token "$CIRCLE_TOKEN"
 
