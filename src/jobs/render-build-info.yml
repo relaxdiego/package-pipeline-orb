@@ -25,7 +25,7 @@ steps:
   - run:
       name: Render BUILD-INFO
       environment:
-        PIPELINE_VERSIONING_PROVIDER: << parameters.versioning_provider >>
+        PL_VERSIONING_PROVIDER: << parameters.versioning_provider >>
       command: <<include(scripts/render-build-info.sh)>>
 
   - persist_to_workspace:
