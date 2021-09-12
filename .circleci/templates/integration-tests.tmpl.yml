@@ -34,7 +34,7 @@ workflows:
       # Integration test for Docker jobs
       #
       - pipeline/lint-docker:
-          dockerfile_path: src/tests/docker/Dockerfile
+          dockerfile_path: src/tests/fixtures/docker/Dockerfile
 
       - pipeline/build-docker:
           requires:
@@ -48,6 +48,8 @@ workflows:
           dockerfile_path: src/tests/fixtures/docker/Dockerfile
           docker_image_name: relaxdiego/package-pipeline-test
 
+      # TODO: Publish the test docker image
+
       #
       # Integration test for Circle CI Orb jobs
       #
@@ -60,3 +62,5 @@ workflows:
                 - .*
 
           orb_src_path: src/tests/fixtures/orb
+
+      # TODO: Publish the test orb

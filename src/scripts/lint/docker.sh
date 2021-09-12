@@ -2,8 +2,16 @@
 set -euo pipefail
 
 Main() {
+    local dockerfile_path
+    dockerfile_path="$(eval echo "$PL_DOCKERFILE_PATH")"
+
+    set -x
+
     sudo npm install --no-progress --global dockerfilelint
-    dockerfilelint "$(eval echo "$PL_DOCKERFILE_PATH")"
+    test -f "$dockerfile_path"
+    dockerfilelint "$dockerfile_path"
+
+    { set +x; } >/dev/null
 }
 
 
