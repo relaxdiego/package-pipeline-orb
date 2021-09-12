@@ -17,14 +17,8 @@ orbs:
 
 
 workflows:
-  integration-tests:
+  docker-integration-tests:
     jobs:
-      #
-      # NOTE: Don't use the "name" argument here so that the Circle CI UI
-      #       will display the job's actual name allowing us to see at a
-      #       glance which job failed integration tests.
-      #
-
       - pipeline/render-build-info:
           filters:
             branches:

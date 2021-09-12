@@ -38,15 +38,14 @@ orbs:
 jobs:
   render-build-info:
     executor: circleci-cli/default
-    environment:
-      PL_VERSIONING_PROVIDER: semver2
     steps:
       - checkout
 
       - run:
           name: Render BUILD-INFO
-          command: |
-             bash src/scripts/render-build-info.sh
+          environment:
+            PL_VERSIONING_PROVIDER: semver2
+          command: bash src/scripts/render-build-info.sh
 
       - persist_to_workspace:
           root: .

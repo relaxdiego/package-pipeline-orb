@@ -1,31 +1,24 @@
 description: >
-  Renders the BUILD-INFO file
+  Renders the BUILD-INFO file and persists it to the workspace.
 
 docker:
   - image: cimg/base:2020.04
 
 parameters:
-  versioning_provider:
-    description: Which versioning scheme to use when naming the package.
+  versioning_scheme:
+    description: Which versioning scheme to use when generating the build ID.
     type: enum
     enum:
       - semver2
     default: semver2
 
 steps:
-  - run:
-      name: Print debug info
-      command: |
-        echo "
-        versioning_provider: << parameters.versioning_provider >>
-        "
-
   - checkout
 
   - run:
       name: Render BUILD-INFO
       environment:
-        PL_VERSIONING_PROVIDER: << parameters.versioning_provider >>
+        PL_VERSIONING_SCHEME: << parameters.versioning_scheme >>
       command: <<include(scripts/render-build-info.sh)>>
 
   - persist_to_workspace:

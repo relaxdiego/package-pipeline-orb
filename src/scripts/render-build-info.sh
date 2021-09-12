@@ -3,27 +3,28 @@
 set -euo pipefail
 
 Main() {
-    case "$PL_VERSIONING_PROVIDER" in
+    case "$PL_VERSIONING_SCHEME" in
 
-    "semver2") RenderSemVer2BuildInfo > BUILD-INFO;;
+    "semver2")
+        PL_BUILD_ID="$(GetSemVer2BuildID)";;
 
     *)
-       echo "FATAL: Unknown PL_VERSIONING_PROVIDER '$PL_VERSIONING_PROVIDER'" 1>&2
-       exit 1
-       ;;
+        echo "FATAL: Unknown PL_VERSIONING_SCHEME '$PL_VERSIONING_PROVIDER'" 1>&2
+        exit 1
+        ;;
 
     esac
+
+    echo "{ \"build_id\": \"$PL_BUILD_ID\" }"
 
     echo "BUILD-INFO rendered as:"
     cat BUILD-INFO
 }
 
 
-#
-# PROVIDERS
-#
+GetSemVer2BuildID() {
+    local build_id=""
 
-RenderSemVer2BuildInfo() {
     if [ "$CIRCLE_BRANCH" = "main" ] || [ "$CIRCLE_BRANCH" = "master" ]; then
         echo "Getting latest git tag in $CIRCLE_BRANCH" 1>&2
         tag=$(git tag --list --merged "$CIRCLE_BRANCH" "v*.*.*"  | head -n1)
@@ -59,7 +60,7 @@ RenderSemVer2BuildInfo() {
 
         build_id="${major_ver}.${minor_ver}.${patch_ver}+${git_short_sha}.${pipeline_instance_number}"
 
-        echo "{\"build_id\": \"$build_id\"}"
+        echo "$build_id"
     fi
 }
 
