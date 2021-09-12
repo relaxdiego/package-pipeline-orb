@@ -181,7 +181,7 @@ workflows:
           requires:
             - Render BUILD-INFO
             - Lint YAML files
-            - Check scripts syntax
+            - Run ShellCheck
             - Run BATS tests
           filters:
             branches:
