@@ -44,3 +44,26 @@ workflows:
 
           dockerfile_path: src/tests/docker/Dockerfile
           docker_image_name: relaxdiego/package-pipeline-test
+
+  #
+  # Integration test for Circle CI Orb jobs
+  #
+  integration-test-orb-jobs:
+    jobs:
+      - pipeline/render-build-info:
+          filters:
+            tags:
+              ignore:
+                - .*
+
+          versioning_scheme: semver2
+
+      - pipeline/build-orb:
+          requires:
+            - pipeline/render-build-info
+          filters:
+            tags:
+              ignore:
+                - .*
+
+          orb_src_path: src/tests/fixtures/orb
