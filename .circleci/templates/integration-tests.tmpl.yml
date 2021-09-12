@@ -17,6 +17,9 @@ orbs:
 
 
 workflows:
+  #
+  # Integration test for Docker jobs
+  #
   docker-integration-tests:
     jobs:
       - pipeline/render-build-info:
@@ -31,21 +34,18 @@ workflows:
 
           versioning_scheme: semver2
 
-      #
-      # Integration test for Docker jobs
-      #
 
-      # - pipeline/build-docker:
-      #     requires:
-      #       - pipeline/render-build-info
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
-      #           - maint/.*
-      #       tags:
-      #         ignore:
-      #           - .*
-      #
-      #     dockerfile_path: src/tests/docker/Dockerfile
-      #     docker_repo: relaxdiego/package-pipeline-test
+      - pipeline/build-docker:
+          requires:
+            - pipeline/render-build-info
+          filters:
+            branches:
+              only:
+                - main
+                - maint/.*
+            tags:
+              ignore:
+                - .*
+
+          dockerfile_path: src/tests/docker/Dockerfile
+          docker_repo: relaxdiego/package-pipeline-test

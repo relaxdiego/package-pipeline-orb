@@ -13,8 +13,10 @@ parameters:
   docker_image_name:
     description: >
       The name to give to the container image. If you are going to push it to a
-      location other than Docker Hub, make sure to supply a full URL. Do not
-      include the TAG since that will be derived from the BUILD-INFO file.
+      location other than Docker Hub, make sure to supply a full URL. DO NOT
+      include the TAG since that will be derived from the BUILD-INFO file that
+      the render-build-info job generates. That also means that you must run the
+      render-build-info job prior to running this job.
     type: string
 
   docker_layer_caching:
