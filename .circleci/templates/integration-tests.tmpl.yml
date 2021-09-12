@@ -17,10 +17,10 @@ orbs:
 
 
 workflows:
-  #
-  # Integration test for Docker jobs
-  #
-  integration-test-docker-jobs:
+  # NOTE: We place all jobs under a single workflow so that we fan them into
+  #       a single job that will wait for approval from a human to publish
+  #       promote the orb to production.
+  integration-tests:
     jobs:
       - pipeline/render-build-info:
           filters:
@@ -30,6 +30,9 @@ workflows:
 
           versioning_scheme: semver2
 
+      #
+      # Integration test for Docker jobs
+      #
       - pipeline/lint-docker:
           dockerfile_path: src/tests/docker/Dockerfile
 
@@ -45,19 +48,9 @@ workflows:
           dockerfile_path: src/tests/docker/Dockerfile
           docker_image_name: relaxdiego/package-pipeline-test
 
-  #
-  # Integration test for Circle CI Orb jobs
-  #
-  integration-test-orb-jobs:
-    jobs:
-      - pipeline/render-build-info:
-          filters:
-            tags:
-              ignore:
-                - .*
-
-          versioning_scheme: semver2
-
+      #
+      # Integration test for Circle CI Orb jobs
+      #
       - pipeline/build-orb:
           requires:
             - pipeline/render-build-info
